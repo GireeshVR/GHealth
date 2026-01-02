@@ -1,0 +1,132 @@
+:root {
+  --primary: #6366f1;
+  --bg: #f8fafc;
+}
+
+.profile-container {
+  padding: 30px;
+  background-color: var(--bg);
+  min-height: 100vh;
+}
+
+/* Header */
+.glass-header {
+  background: white;
+  padding: 25px;
+  border-radius: 20px;
+  margin-bottom: 40px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+}
+
+.gradient-text {
+  background: linear-gradient(90deg, #4f46e5, #ec4899);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 800;
+  font-size: 2rem;
+}
+
+/* Daily Section Layout */
+.date-section-wrapper {
+  margin-bottom: 40px;
+}
+
+.date-badge {
+  background: #1e293b;
+  color: white;
+  padding: 6px 16px;
+  border-radius: 50px;
+  font-size: 13px;
+  display: inline-block;
+  margin-bottom: 15px;
+}
+
+.date-grid {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 25px;
+}
+
+/* Meal Card Styling */
+.meal-card {
+  background: white;
+  border-radius: 16px;
+  padding: 18px;
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid transparent;
+  transition: 0.3s ease;
+}
+
+.meal-card:hover {
+  transform: translateX(5px);
+  border-color: var(--primary);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+
+.meal-name { font-weight: 700; color: #1e293b; font-size: 16px; }
+
+.macro-pills { display: flex; gap: 6px; margin-top: 8px; }
+
+.pill { padding: 3px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; }
+.pill.cal { background: #eef2ff; color: #4338ca; }
+.pill.prot { background: #ecfdf5; color: #065f46; }
+.pill.carb { background: #fffbeb; color: #92400e; }
+.pill.fat { background: #fef2f2; color: #991b1b; }
+
+/* Day Summary Progress Card */
+.day-summary-card {
+  background: white;
+  padding: 22px;
+  border-radius: 20px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+  height: fit-content;
+}
+
+.summary-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.total-cal-text { font-weight: 800; color: var(--primary); font-size: 14px; }
+
+.custom-progress-group { margin-bottom: 18px; }
+
+.progress-labels { display: flex; justify-content: space-between; margin-bottom: 6px; }
+.progress-labels label { font-size: 13px; font-weight: 600; color: #64748b; }
+.progress-labels span { font-size: 12px; font-weight: 700; }
+
+/* Slim Bars */
+.progress { height: 6px !important; border-radius: 10px !important; background: #f1f5f9 !important; }
+.pg-protein .progress-bar { background: #6366f1 !important; }
+.pg-carbs .progress-bar { background: #f59e0b !important; }
+.pg-fat .progress-bar { background: #ef4444 !important; }
+
+/* Action Buttons */
+.action-btn { border: none; width: 34px; height: 34px; border-radius: 10px; margin-left: 5px; }
+.edit { background: #f1f5f9; }
+.delete { background: #fee2e2; }
+
+/* Global Stats Footer */
+.global-stats {
+  margin-top: 50px;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 25px;
+}
+
+.liquid-card, .chart-card-full {
+  background: white; padding: 25px; border-radius: 24px; text-align: center;
+}
+
+/* Loader */
+.loader-box { text-align: center; padding: 100px; font-weight: bold; color: var(--primary); }
+
+@media (max-width: 1000px) {
+  .date-grid, .global-stats { grid-template-columns: 1fr; }
+}

@@ -1,0 +1,206 @@
+/* --- RESET & BASE --- */
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  scroll-behavior: smooth;
+}
+
+body {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  font-family: "Segoe UI", system-ui, sans-serif;
+}
+
+.containerr {
+  width: 100vw;
+  height: 100vh;
+}
+
+.nav_content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+}
+
+/* --- LEFT SIDEBAR --- */
+.left_nav {
+  width: 240px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centers the list items horizontally */
+  padding-top: 25px;
+  /* Dark overlay on background image for readability */
+  background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), 
+              url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSWbxENtsP_858lvZ04gvLjRceqimuUM_RSCg&s");
+  background-repeat: no-repeat;
+  background-size: cover;
+  box-shadow: 4px 0 15px rgba(0, 0, 0, 0.5);
+  z-index: 10;
+}
+
+.left_nav_ul {
+  width: 100%;
+  list-style: none;
+  padding: 0 10px;
+}
+
+.left_nav_ul li {
+  width: 100%;
+  margin-bottom: 15px;
+  display: flex;
+  justify-content: center;
+}
+
+/* --- CYBERPUNK NAVLINK --- */
+.left_nav_ul li a {
+  position: relative;
+  width: 95%; /* Provides the 'centered' look with padding */
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  color: #00ffff;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 13px;
+  font-weight: bold;
+  transition: 0.5s;
+  overflow: hidden;
+  gap: 15px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 4px;
+}
+
+/* --- HOVER EFFECT --- */
+.left_nav_ul li a:hover {
+  background: #F5EE14; /* Yellow background on hover */
+  color: #050801;
+  transform: translateX(5px);
+  box-shadow: 0 0 5px #F5EE14, 0 0 25px #F5EE14;
+  /* Reflection effect */
+  -webkit-box-reflect: below 1px linear-gradient(transparent, rgba(0,0,0,0.1));
+}
+
+.left_nav_ul li a:hover ion-icon {
+  color: #050801;
+}
+
+/* --- ACTIVE LINK STATE --- */
+.left_nav_ul li a.active {
+  background: rgba(0, 255, 255, 0.15);
+  border: 1px solid rgba(0, 255, 255, 0.5);
+  color: #ffffff;
+}
+
+.left_nav_ul li a.active ion-icon {
+  color: #00ffff;
+}
+
+/* --- ICON & TEXT LAYER --- */
+.left_nav_ul li a ion-icon, 
+.left_nav_ul li a div {
+  z-index: 1; /* Ensures text is above the moving spans */
+}
+
+/* --- NEON BORDER SPANS --- */
+.left_nav_ul li a span {
+  position: absolute;
+  display: block;
+}
+
+/* Top line - Red Flow */
+.left_nav_ul li a:hover span:nth-child(1) {
+  top: 0; left: -100%;
+  width: 100%; height: 2px;
+  background: linear-gradient(90deg, transparent, #CC2516);
+  animation: cyber-anim1 1s linear infinite;
+}
+
+/* Right line - Red Flow */
+.left_nav_ul li a:hover span:nth-child(2) {
+  top: -100%; right: 0;
+  width: 2px; height: 100%;
+  background: linear-gradient(180deg, transparent, #CC2516);
+  animation: cyber-anim2 1s linear infinite;
+  animation-delay: 0.25s;
+}
+
+/* Bottom line - Red Flow */
+.left_nav_ul li a:hover span:nth-child(3) {
+  bottom: 0; right: -100%;
+  width: 100%; height: 2px;
+  background: linear-gradient(270deg, transparent, #CC2516);
+  animation: cyber-anim3 1s linear infinite;
+  animation-delay: 0.5s;
+}
+
+/* Left line - Red Flow */
+.left_nav_ul li a:hover span:nth-child(4) {
+  bottom: -100%; left: 0;
+  width: 2px; height: 100%;
+  background: linear-gradient(360deg, transparent, #CC2516);
+  animation: cyber-anim4 1s linear infinite;
+  animation-delay: 0.75s;
+}
+
+@keyframes cyber-anim1 { 0% { left: -100%; } 100% { left: 100%; } }
+@keyframes cyber-anim2 { 0% { top: -100%; } 100% { top: 100%; } }
+@keyframes cyber-anim3 { 0% { right: -100%; } 100% { right: 100%; } }
+@keyframes cyber-anim4 { 0% { bottom: -100%; } 100% { bottom: 100%; } }
+
+/* --- RIGHT SECTION LAYOUT --- */
+.right_nav {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #f8fafc;
+}
+
+.right_nav .navb {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 0 30px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  height: 60px;
+  flex-shrink: 0;
+}
+
+.navb_wrap {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.user_name {
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.right_nav .navb button {
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+.right_nav .navb button:hover {
+  background-color: #dc2626;
+  box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3);
+}
+
+.content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 25px;
+}

@@ -1,0 +1,15 @@
+# Django / Python
+venv/
+__pycache__/
+*.pyc
+*.log
+.env
+db.sqlite3
+
+# React
+GHealth/node_modules/
+GHealth/dist/
+
+# OS / Editor
+.vscode/
+.DS_Store

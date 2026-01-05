@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WellNest | Elite Performance Portal</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@700;800;900&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --wellnest-blue: #0071e3;
+            --wellnest-orange: #ff6b35;
+            --wellnest-gradient: linear-gradient(135deg, #0071e3 0%, #ff6b35 100%);
+            --wellnest-energy: linear-gradient(135deg, #ff6b35 0%, #ffd166 50%, #0071e3 100%);
+            --ease-apple: cubic-bezier(0.28, 0.11, 0.32, 1);
+            --glass-bg: rgba(255, 255, 255, 0.12);
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: white;
+            background: #0a0a0a;
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Epic Video Background */
+        .video-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+        }
+
+        .video-background video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(0.4) contrast(1.2);
+        }
+
+        /* Animated Gradient Overlay */
+        .gradient-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, 
+                rgba(0, 113, 227, 0.15) 0%, 
+                rgba(255, 107, 53, 0.15) 50%, 
+                rgba(10, 10, 10, 0.9) 100%);
+            z-index: -1;
+            animation: gradientShift 20s ease infinite alternate;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+
+        /* Ultra Glass Effect */
+        .ultra-glass {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: saturate(200%) blur(30px);
+            -webkit-backdrop-filter: saturate(200%) blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 
+                0 20px 60px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        /* Energy Button */
+        .energy-btn {
+            background: linear-gradient(135deg, #ff6b35 0%, #ffd166 50%, #0071e3 100%);
+            background-size: 200% auto;
+            color: white;
+            transition: all 0.6s var(--ease-apple);
+            position: relative;
+            overflow: hidden;
+            font-weight: 800;
+            letter-spacing: 0.1em;
+        }
+
+        .energy-btn:hover {
+            background-position: right center;
+            transform: translateY(-3px);
+            box-shadow: 
+                0 20px 40px rgba(255, 107, 53, 0.3),
+                0 0 60px rgba(0, 113, 227, 0.3);
+            animation: pulse-glow 1.5s infinite alternate;
+        }
+
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 20px 40px rgba(255, 107, 53, 0.3), 0 0 60px rgba(0, 113, 227, 0.3); }
+            100% { box-shadow: 0 20px 40px rgba(255, 107, 53, 0.5), 0 0 80px rgba(0, 113, 227, 0.5); }
+        }
+
+        /* Stats Counter */
+        .stat-counter {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            background: linear-gradient(135deg, #ffffff 0%, #a0a0a0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 4.5rem;
+            line-height: 1;
+            text-shadow: 0 5px 20px rgba(255, 255, 255, 0.1);
+        }
+
+        /* Floating Energy Orbs */
+        .energy-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(40px);
+            opacity: 0.4;
+            z-index: -1;
+            animation: float-orb 15s infinite ease-in-out alternate;
+        }
+
+        @keyframes float-orb {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(100px, -100px) scale(1.2); }
+        }
+
+        /* Input Fields */
+        .cyber-input {
+            background: rgba(0, 0, 0, 0.4);
+            border: 2px solid transparent;
+            border-radius: 16px;
+            transition: all 0.4s var(--ease-apple);
+            font-weight: 600;
+            color: white;
+            position: relative;
+        }
+
+        .cyber-input:focus {
+            background: rgba(0, 0, 0, 0.6);
+            border-color: #ff6b35;
+            box-shadow: 
+                0 0 0 4px rgba(255, 107, 53, 0.15),
+                inset 0 2px 10px rgba(0, 0, 0, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .cyber-input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+            font-weight: 500;
+        }
+
+        /* Performance Bars */
+        .perf-bar {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .perf-bar-fill {
+            height: 100%;
+            background: var(--wellnest-gradient);
+            border-radius: 3px;
+            position: relative;
+            animation: loading-bar 2s ease infinite alternate;
+        }
+
+        @keyframes loading-bar {
+            0% { width: 30%; }
+            100% { width: 70%; }
+        }
+
+        /* Text Effects */
+        .text-3d {
+            text-shadow: 
+                0 1px 0 #ccc,
+                0 2px 0 #c9c9c9,
+                0 3px 0 #bbb,
+                0 4px 0 #b9b9b9,
+                0 5px 0 #aaa,
+                0 6px 1px rgba(0,0,0,.1),
+                0 0 5px rgba(0,0,0,.1),
+                0 1px 3px rgba(0,0,0,.3),
+                0 3px 5px rgba(0,0,0,.2),
+                0 5px 10px rgba(0,0,0,.25);
+        }
+
+        .text-glow {
+            text-shadow: 0 0 30px rgba(255, 107, 53, 0.7),
+                         0 0 60px rgba(0, 113, 227, 0.5);
+        }
+
+        /* Scan Lines */
+        .scan-lines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                transparent 50%,
+                rgba(0, 0, 0, 0.1) 50%
+            );
+            background-size: 100% 4px;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.3;
+        }
+
+        /* Reveal Animation */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            animation: revealIn 1.2s var(--ease-apple) forwards;
+        }
+
+        @keyframes revealIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .delay-1 { animation-delay: 0.2s; }
+        .delay-2 { animation-delay: 0.4s; }
+        .delay-3 { animation-delay: 0.6s; }
+
+        /* Heartbeat Animation */
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            5% { transform: scale(1.1); }
+            10% { transform: scale(1); }
+            15% { transform: scale(1.1); }
+            20% { transform: scale(1); }
+        }
+
+        .heartbeat {
+            animation: heartbeat 2s infinite;
+        }
+
+        /* Typewriter Effect */
+        .typewriter {
+            overflow: hidden;
+            border-right: 3px solid #ff6b35;
+            white-space: nowrap;
+            margin: 0 auto;
+            animation: 
+                typing 3.5s steps(40, end),
+                blink-caret 0.75s step-end infinite;
+        }
+
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: #ff6b35; }
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex items-center justify-center p-4">
+
+    <!-- Video Background -->
+    <div class="video-background">
+        <video autoplay muted loop playsinline>
+            <source src="https://assets.mixkit.co/videos/preview/mixkit-man-training-at-the-gym-30703-large.mp4" type="video/mp4">
+            <!-- Fallback image if video doesn't load -->
+        </video>
+    </div>
+
+    <!-- Gradient Overlay -->
+    <div class="gradient-overlay"></div>
+
+    <!-- Energy Orbs -->
+    <div class="energy-orb w-64 h-64 bg-blue-500 top-20 left-10" style="animation-delay: 0s;"></div>
+    <div class="energy-orb w-96 h-96 bg-orange-500 bottom-20 right-10" style="animation-delay: 5s;"></div>
+    <div class="energy-orb w-48 h-48 bg-cyan-400 top-1/2 left-1/3" style="animation-delay: 10s;"></div>
+
+    <!-- Scan Lines Effect -->
+    <div class="scan-lines"></div>
+
+    <!-- Main Content -->
+    <main class="w-full max-w-6xl mx-auto relative z-10">
+        
+        <!-- Stats Bar -->
+        <div class="flex justify-between items-center mb-16 px-6 reveal">
+            <div class="text-center">
+                <div class="stat-counter">12,847</div>
+                <p class="text-sm font-bold uppercase tracking-widest text-gray-300 mt-2">ACTIVE WARRIORS</p>
+            </div>
+            <div class="text-center">
+                <div class="stat-counter">94.3%</div>
+                <p class="text-sm font-bold uppercase tracking-widest text-gray-300 mt-2">SUCCESS RATE</p>
+            </div>
+            <div class="text-center">
+                <div class="stat-counter">18.5</div>
+                <p class="text-sm font-bold uppercase tracking-widest text-gray-300 mt-2">AVG GAINS (LBS)</p>
+            </div>
+        </div>
+
+        <!-- Main Glass Panel -->
+        <div class="ultra-glass rounded-[40px] p-8 md:p-16 reveal delay-1">
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                
+                <!-- Left Column - Motivational Content -->
+                <div>
+                    <div class="inline-flex items-center gap-3 px-5 py-2 rounded-full bg-black/40 mb-10">
+                        <div class="w-2 h-2 bg-[#ff6b35] rounded-full heartbeat"></div>
+                        <span class="text-[10px] font-black uppercase tracking-[0.4em] text-[#ff6b35]">LIVE ENERGY FEED</span>
+                    </div>
+
+                    <h1 class="text-7xl md:text-8xl font-black leading-[0.9] mb-8 text-glow">
+                        IGNITE YOUR <span class="text-transparent bg-clip-text" style="background: var(--wellnest-energy);">INNER FIRE</span>
+                    </h1>
+
+                    <p class="text-xl text-gray-300 mb-10 leading-relaxed font-medium">
+                        Where elite athletes, warriors, and peak performers converge to transform potential into power. Your journey to physical supremacy begins here.
+                    </p>
+
+                    <!-- Performance Metrics -->
+                    <div class="space-y-8 mb-12">
+                        <div>
+                            <div class="flex justify-between mb-3">
+                                <span class="font-bold text-white">STRENGTH PROGRESSION</span>
+                                <span class="font-black text-[#ff6b35]">+42%</span>
+                            </div>
+                            <div class="perf-bar">
+                                <div class="perf-bar-fill" style="width: 85%"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between mb-3">
+                                <span class="font-bold text-white">ENDURANCE CAPACITY</span>
+                                <span class="font-black text-[#0071e3]">+67%</span>
+                            </div>
+                            <div class="perf-bar">
+                                <div class="perf-bar-fill" style="width: 90%"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between mb-3">
+                                <span class="font-bold text-white">RECOVERY SPEED</span>
+                                <span class="font-black text-[#ffd166]">+38%</span>
+                            </div>
+                            <div class="perf-bar">
+                                <div class="perf-bar-fill" style="width: 75%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Motivational Quote -->
+                    <div class="ultra-glass p-8 rounded-3xl mb-10">
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#ff6b35] to-[#ffd166] flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-dumbbell text-white"></i>
+                            </div>
+                            <div>
+                                <p class="text-lg font-semibold italic text-white mb-2">"The body achieves what the mind believes. Pain is temporary. Quitting lasts forever."</p>
+                                <p class="text-sm font-bold text-[#ff6b35]">— Elite Performance Protocol</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column - Login Form -->
+                <div>
+                    <div class="ultra-glass rounded-3xl p-10">
+                        <div class="text-center mb-10">
+                            <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-[#ff6b35] to-[#0071e3] flex items-center justify-center mx-auto mb-6 shadow-2xl">
+                                <i class="fas fa-fire text-white text-3xl"></i>
+                            </div>
+                            <h2 class="text-4xl font-black mb-3">ENERGY SYNC</h2>
+                            <p class="text-gray-400 font-medium">Access your elite performance dashboard</p>
+                        </div>
+
+                        <form onsubmit="handleLogin(event)" class="space-y-8">
+                            <!-- Email Field -->
+                            <div class="space-y-3">
+                                <label class="text-sm font-bold text-white uppercase tracking-widest flex items-center gap-2">
+                                    <i class="fas fa-user-circle text-[#ff6b35]"></i> WARRIOR IDENTITY
+                                </label>
+                                <div class="relative">
+                                    <input type="email" required placeholder="yourname@elite.performance" 
+                                           class="cyber-input w-full px-6 py-5 pl-14">
+                                    <div class="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400">
+                                        <i class="fas fa-at"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Password Field -->
+                            <div class="space-y-3">
+                                <div class="flex justify-between items-center">
+                                    <label class="text-sm font-bold text-white uppercase tracking-widest flex items-center gap-2">
+                                        <i class="fas fa-shield-alt text-[#0071e3]"></i> ACCESS CODE
+                                    </label>
+                                    <button type="button" onclick="toggleRecovery()" class="text-xs font-bold text-gray-400 hover:text-[#ff6b35] transition-colors">
+                                        Lost Access?
+                                    </button>
+                                </div>
+                                <div class="relative">
+                                    <input type="password" id="securityKey" required placeholder="••••••••••••" 
+                                           class="cyber-input w-full px-6 py-5 pl-14">
+                                    <div class="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400">
+                                        <i class="fas fa-key"></i>
+                                    </div>
+                                    <button type="button" onclick="togglePassword()" 
+                                            class="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors">
+                                        <i id="eyeIcon" class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Remember & Quick Login -->
+                            <div class="flex items-center justify-between">
+                                <label class="flex items-center gap-3 cursor-pointer group">
+                                    <div class="relative">
+                                        <input type="checkbox" class="sr-only" checked>
+                                        <div class="w-5 h-5 rounded-md bg-black/40 border border-gray-600 group-hover:border-[#ff6b35] transition-colors flex items-center justify-center">
+                                            <i class="fas fa-check text-[#ff6b35] text-xs"></i>
+                                        </div>
+                                    </div>
+                                    <span class="text-sm font-semibold text-gray-300">Remember Me</span>
+                                </label>
+                                <button type="button" class="text-xs font-bold text-gray-400 hover:text-[#0071e3] transition-colors flex items-center gap-2">
+                                    <i class="fas fa-bolt"></i> Quick Login
+                                </button>
+                            </div>
+
+                            <!-- Login Button -->
+                            <button type="submit" id="loginBtn" 
+                                    class="energy-btn w-full py-5 rounded-2xl font-black uppercase text-sm tracking-widest shadow-2xl">
+                                <i class="fas fa-power-off mr-3"></i> ACTIVATE PERFORMANCE MODE
+                            </button>
+
+                            <!-- Divider -->
+                            <div class="relative my-8">
+                                <div class="absolute inset-0 flex items-center">
+                                    <div class="w-full border-t border-gray-700"></div>
+                                </div>
+                                <div class="relative flex justify-center">
+                                    <span class="px-4 bg-transparent text-gray-500 font-bold uppercase tracking-widest text-xs">Or Continue With</span>
+                                </div>
+                            </div>
+
+                            <!-- Social Login -->
+                            <div class="grid grid-cols-2 gap-4">
+                                <button type="button" 
+                                        class="py-4 rounded-xl bg-black/40 border border-gray-800 hover:border-[#ff6b35] hover:bg-black/60 transition-all group flex items-center justify-center gap-3">
+                                    <div class="w-10 h-10 rounded-lg bg-black flex items-center justify-center group-hover:bg-[#ff6b35] transition-colors">
+                                        <i class="fab fa-apple text-white"></i>
+                                    </div>
+                                    <span class="text-sm font-bold text-white">Apple</span>
+                                </button>
+                                <button type="button" 
+                                        class="py-4 rounded-xl bg-black/40 border border-gray-800 hover:border-[#0071e3] hover:bg-black/60 transition-all group flex items-center justify-center gap-3">
+                                    <div class="w-10 h-10 rounded-lg bg-[#0071e3] flex items-center justify-center">
+                                        <i class="fab fa-google text-white"></i>
+                                    </div>
+                                    <span class="text-sm font-bold text-white">Google</span>
+                                </button>
+                            </div>
+                        </form>
+
+                        <!-- Create Account -->
+                        <div class="mt-12 pt-8 border-t border-gray-800 text-center">
+                            <p class="text-sm font-bold text-gray-400 mb-4">NEW TO THE ARENA?</p>
+                            <a href="signup.html" 
+                               class="inline-flex items-center justify-center gap-3 px-8 py-4 rounded-2xl bg-black/40 border-2 border-gray-800 hover:border-[#ff6b35] hover:text-[#ff6b35] transition-all group w-full">
+                                <div class="w-12 h-12 rounded-xl bg-black group-hover:bg-[#ff6b35] transition-colors flex items-center justify-center">
+                                    <i class="fas fa-plus text-white"></i>
+                                </div>
+                                <div class="text-left flex-1">
+                                    <p class="font-black text-lg">FORGE YOUR LEGACY</p>
+                                    <p class="text-xs text-gray-400 font-bold tracking-widest">Begin Your Transformation</p>
+                                </div>
+                                <i class="fas fa-arrow-right text-gray-500 group-hover:text-[#ff6b35] transition-colors text-xl"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Live Stats Footer -->
+                    <div class="mt-8 flex items-center justify-center gap-8 text-xs font-bold text-gray-400">
+                        <div class="flex items-center gap-2">
+                            <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                            <span>SYSTEMS: ONLINE</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+                            <span>4,287 ACTIVE SESSIONS</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="w-2 h-2 bg-[#ff6b35] rounded-full"></div>
+                            <span>24/7 SUPPORT</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Workout of the Day -->
+        <div class="mt-12 reveal delay-2">
+            <div class="ultra-glass rounded-3xl p-8">
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h3 class="text-2xl font-black text-white mb-2">TODAY'S WARRIOR PROTOCOL</h3>
+                        <p class="text-gray-400">Elite strength circuit for maximum hypertrophy</p>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <div class="text-center">
+                            <div class="text-3xl font-black text-[#ff6b35]">45</div>
+                            <p class="text-xs text-gray-400">MINUTES</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-black text-[#0071e3]">1,280</div>
+                            <p class="text-xs text-gray-400">CALORIES</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-4 gap-4">
+                    <div class="bg-black/40 rounded-2xl p-4 text-center">
+                        <div class="w-12 h-12 rounded-xl bg-[#ff6b35]/20 flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-dumbbell text-[#ff6b35]"></i>
+                        </div>
+                        <p class="font-bold text-white">Bench Press</p>
+                        <p class="text-xs text-gray-400">4x8 @ 85%</p>
+                    </div>
+                    <div class="bg-black/40 rounded-2xl p-4 text-center">
+                        <div class="w-12 h-12 rounded-xl bg-[#0071e3]/20 flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-running text-[#0071e3]"></i>
+                        </div>
+                        <p class="font-bold text-white">Deadlifts</p>
+                        <p class="text-xs text-gray-400">3x5 @ 90%</p>
+                    </div>
+                    <div class="bg-black/40 rounded-2xl p-4 text-center">
+                        <div class="w-12 h-12 rounded-xl bg-[#ffd166]/20 flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-heartbeat text-[#ffd166]"></i>
+                        </div>
+                        <p class="font-bold text-white">Pull-ups</p>
+                        <p class="text-xs text-gray-400">4xFailure</p>
+                    </div>
+                    <div class="bg-black/40 rounded-2xl p-4 text-center">
+                        <div class="w-12 h-12 rounded-xl bg-green-500/20 flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-fire text-green-500"></i>
+                        </div>
+                        <p class="font-bold text-white">Sprints</p>
+                        <p class="text-xs text-gray-400">10x100m</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Recovery Modal -->
+    <div id="recoveryModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-xl hidden items-center justify-center p-6 transition-all">
+        <div class="ultra-glass rounded-3xl p-12 max-w-md w-full">
+            <button onclick="toggleRecovery()" class="absolute top-8 right-8 text-gray-400 hover:text-white transition-colors">
+                <i class="fas fa-times text-2xl"></i>
+            </button>
+            
+            <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-[#ff6b35] to-[#0071e3] flex items-center justify-center mx-auto mb-8">
+                <i class="fas fa-key text-white text-2xl"></i>
+            </div>
+            
+            <h2 class="text-3xl font-black text-white text-center mb-4">RECOVER ACCESS</h2>
+            <p class="text-gray-400 text-center mb-10">Enter your warrior email to receive a recovery code</p>
+            
+            <div class="space-y-6">
+                <input type="email" placeholder="warrior@elite.performance" 
+                       class="cyber-input w-full px-6 py-5 text-center">
+                
+                <button onclick="handleRecovery()" 
+                        class="energy-btn w-full py-5 rounded-2xl font-black uppercase text-sm tracking-widest">
+                    <i class="fas fa-paper-plane mr-2"></i> SEND RECOVERY CODE
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Password visibility toggle
+        function togglePassword() {
+            const passwordInput = document.getElementById('securityKey');
+            const eyeIcon = document.getElementById('eyeIcon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.classList.remove('fa-eye');
+                eyeIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.classList.remove('fa-eye-slash');
+                eyeIcon.classList.add('fa-eye');
+            }
+        }
+
+        // Recovery modal toggle
+        function toggleRecovery() {
+            const modal = document.getElementById('recoveryModal');
+            modal.classList.toggle('hidden');
+            modal.classList.toggle('flex');
+            document.body.style.overflow = modal.classList.contains('hidden') ? 'auto' : 'hidden';
+        }
+
+        // Handle recovery submission
+        function handleRecovery() {
+            const btn = document.querySelector('#recoveryModal button');
+            const originalText = btn.innerHTML;
+            
+            btn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i> SENDING...`;
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                btn.innerHTML = `<i class="fas fa-check mr-2"></i> CODE SENT`;
+                btn.classList.remove('energy-btn');
+                btn.classList.add('bg-green-600');
+                
+                setTimeout(() => {
+                    toggleRecovery();
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                    btn.classList.remove('bg-green-600');
+                    btn.classList.add('energy-btn');
+                }, 1500);
+            }, 1200);
+        }
+
+        // Handle login submission
+        function handleLogin(e) {
+            e.preventDefault();
+            const btn = document.getElementById('loginBtn');
+            const originalHTML = btn.innerHTML;
+            
+            btn.innerHTML = `<i class="fas fa-spinner fa-spin mr-3"></i> ACTIVATING PERFORMANCE MODE...`;
+            btn.disabled = true;
+            
+            // Add loading effects
+            document.querySelectorAll('.cyber-input').forEach(input => {
+                input.style.background = 'rgba(255, 107, 53, 0.1)';
+            });
+            
+            // Simulate loading animation on perf bars
+            document.querySelectorAll('.perf-bar-fill').forEach(bar => {
+                const currentWidth = bar.style.width;
+                bar.style.width = '100%';
+                bar.style.transition = 'width 2s ease';
+            });
+            
+            setTimeout(() => { 
+                window.location.href = 'dashboard.html'; 
+            }, 2000);
+        }
+
+        // Animate stats counter
+        function animateCounter(element, target) {
+            let current = 0;
+            const increment = target / 100;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    element.textContent = target;
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(current);
+                }
+            }, 20);
+        }
+
+        // Initialize counters when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            const counters = document.querySelectorAll('.stat-counter');
+            counters.forEach(counter => {
+                const target = parseInt(counter.textContent.replace(/,/g, ''));
+                counter.textContent = '0';
+                setTimeout(() => animateCounter(counter, target), 500);
+            });
+        });
+
+        // Video fallback if video doesn't load
+        setTimeout(() => {
+            const video = document.querySelector('video');
+            if (video && video.readyState < 3) {
+                document.querySelector('.video-background').innerHTML = `
+                    <div style="background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%); width: 100%; height: 100%;">
+                        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
+                            <i class="fas fa-fire text-6xl text-orange-500 mb-4"></i>
+                            <p class="text-white font-bold text-xl">WELLNEST PERFORMANCE</p>
+                        </div>
+                    </div>
+                `;
+            }
+        }, 3000);
+    </script>
+</body>
+</html>

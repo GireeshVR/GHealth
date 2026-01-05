@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="WellNest OS - Elite Human Performance Mentorship">
+    <title>WellNest™ | Forge Your Legacy</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@700;800;900&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --wellnest-blue: #0071e3;
+            --wellnest-orange: #ff6b35;
+            --wellnest-gold: #ffd166;
+            --wellnest-gradient: linear-gradient(135deg, #0071e3 0%, #ff6b35 100%);
+            --wellnest-energy: linear-gradient(135deg, #ff6b35 0%, #ffd166 50%, #0071e3 100%);
+            --ease-apple: cubic-bezier(0.28, 0.11, 0.32, 1);
+            --glass-bg: rgba(255, 255, 255, 0.12);
+        }
+
+        body {
+            background: #0a0a0a;
+            color: white;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+            letter-spacing: -0.015em;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        /* Video Background */
+        .video-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+        }
+
+        .video-background video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(0.4) contrast(1.2);
+        }
+
+        /* Gradient Overlay */
+        .gradient-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, 
+                rgba(0, 113, 227, 0.15) 0%, 
+                rgba(255, 107, 53, 0.15) 50%, 
+                rgba(10, 10, 10, 0.95) 100%);
+            z-index: -1;
+            animation: gradientShift 20s ease infinite alternate;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+
+        /* Ultra Glass Effect */
+        .ultra-glass {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: saturate(200%) blur(30px);
+            -webkit-backdrop-filter: saturate(200%) blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 
+                0 20px 60px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        /* Energy Button */
+        .energy-btn {
+            background: linear-gradient(135deg, #ff6b35 0%, #ffd166 50%, #0071e3 100%);
+            background-size: 200% auto;
+            color: white;
+            transition: all 0.6s var(--ease-apple);
+            position: relative;
+            overflow: hidden;
+            font-weight: 800;
+            letter-spacing: 0.1em;
+        }
+
+        .energy-btn:hover {
+            background-position: right center;
+            transform: translateY(-3px);
+            box-shadow: 
+                0 20px 40px rgba(255, 107, 53, 0.3),
+                0 0 60px rgba(0, 113, 227, 0.3);
+            animation: pulse-glow 1.5s infinite alternate;
+        }
+
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 20px 40px rgba(255, 107, 53, 0.3), 0 0 60px rgba(0, 113, 227, 0.3); }
+            100% { box-shadow: 0 20px 40px rgba(255, 107, 53, 0.5), 0 0 80px rgba(0, 113, 227, 0.5); }
+        }
+
+        /* Text Effects */
+        .text-glow {
+            text-shadow: 0 0 30px rgba(255, 107, 53, 0.7),
+                         0 0 60px rgba(0, 113, 227, 0.5);
+        }
+
+        .gradient-text {
+            background: var(--wellnest-energy);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Stats Counter */
+        .stat-counter {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            background: linear-gradient(135deg, #ffffff 0%, #a0a0a0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 4.5rem;
+            line-height: 1;
+            text-shadow: 0 5px 20px rgba(255, 255, 255, 0.1);
+        }
+
+        /* Input Fields */
+        .cyber-input {
+            background: rgba(0, 0, 0, 0.4);
+            border: 2px solid transparent;
+            border-radius: 16px;
+            transition: all 0.4s var(--ease-apple);
+            font-weight: 600;
+            color: white;
+            position: relative;
+        }
+
+        .cyber-input:focus {
+            background: rgba(0, 0, 0, 0.6);
+            border-color: #ff6b35;
+            box-shadow: 
+                0 0 0 4px rgba(255, 107, 53, 0.15),
+                inset 0 2px 10px rgba(0, 0, 0, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .cyber-input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+            font-weight: 500;
+        }
+
+        /* Performance Bars */
+        .perf-bar {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .perf-bar-fill {
+            height: 100%;
+            background: var(--wellnest-gradient);
+            border-radius: 3px;
+            position: relative;
+            animation: loading-bar 2s ease infinite alternate;
+        }
+
+        @keyframes loading-bar {
+            0% { width: 30%; }
+            100% { width: 70%; }
+        }
+
+        /* Energy Orbs */
+        .energy-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(40px);
+            opacity: 0.4;
+            z-index: -1;
+            animation: float-orb 15s infinite ease-in-out alternate;
+        }
+
+        @keyframes float-orb {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(100px, -100px) scale(1.2); }
+        }
+
+        /* Scan Lines */
+        .scan-lines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                transparent 50%,
+                rgba(0, 0, 0, 0.1) 50%
+            );
+            background-size: 100% 4px;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.3;
+        }
+
+        /* Reveal Animation */
+        .reveal { 
+            opacity: 0; 
+            transform: translateY(40px); 
+            animation: revealIn 1.2s var(--ease-apple) forwards;
+        }
+
+        @keyframes revealIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .delay-1 { animation-delay: 0.2s; }
+        .delay-2 { animation-delay: 0.4s; }
+        .delay-3 { animation-delay: 0.6s; }
+
+        /* Heartbeat Animation */
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            5% { transform: scale(1.1); }
+            10% { transform: scale(1); }
+            15% { transform: scale(1.1); }
+            20% { transform: scale(1); }
+        }
+
+        .heartbeat {
+            animation: heartbeat 2s infinite;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.3); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: rgba(255, 107, 53, 0.5); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255, 107, 53, 0.7); }
+
+        /* Badge */
+        .energy-badge {
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.2), rgba(0, 113, 227, 0.2));
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 107, 53, 0.3);
+        }
+
+        /* Warrior Card */
+        .warrior-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 24px;
+            height: 500px;
+            transition: all 0.6s var(--ease-apple);
+        }
+
+        .warrior-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 30px 80px rgba(255, 107, 53, 0.3);
+        }
+
+        .warrior-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(20%) brightness(0.8);
+            transition: all 0.8s var(--ease-apple);
+        }
+
+        .warrior-card:hover .warrior-image {
+            filter: grayscale(0%) brightness(1);
+            transform: scale(1.05);
+        }
+
+        .warrior-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.5) 60%, transparent 100%);
+            padding: 30px;
+        }
+
+        .warrior-tag {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            padding: 6px 16px;
+            border-radius: 100px;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body class="selection:bg-orange-500/20">
+
+    <!-- Video Background -->
+    <div class="video-background">
+        <video autoplay muted loop playsinline>
+            <source src="https://assets.mixkit.co/videos/preview/mixkit-bodybuilder-training-with-barbell-50939-large.mp4" type="video/mp4">
+        </video>
+    </div>
+
+    <!-- Gradient Overlay -->
+    <div class="gradient-overlay"></div>
+
+    <!-- Scan Lines -->
+    <div class="scan-lines"></div>
+
+    <!-- Energy Orbs -->
+    <div class="energy-orb w-64 h-64 bg-blue-500 top-20 left-10" style="animation-delay: 0s;"></div>
+    <div class="energy-orb w-96 h-96 bg-orange-500 bottom-20 right-10" style="animation-delay: 5s;"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-[1000] top-0 px-10 py-8 flex justify-between items-center ultra-glass">
+        <a href="#" class="flex items-center gap-3 group">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#ff6b35] to-[#0071e3] flex items-center justify-center group-hover:rotate-12 transition-transform duration-500 shadow-lg">
+                <i class="fas fa-dumbbell text-white text-lg"></i>
+            </div>
+            <span class="text-2xl font-black tracking-tighter">WELLNEST<span class="text-[#ff6b35]">.</span></span>
+        </a>
+        
+        <div class="hidden md:flex gap-12 text-[10px] font-black uppercase tracking-[0.4em] text-gray-300">
+            <a href="#council" class="hover:text-white transition">WARRIORS</a>
+            <a href="#features" class="hover:text-white transition">PROTOCOLS</a>
+            <a href="#stats" class="hover:text-white transition">RESULTS</a>
+            <a href="#enroll" class="hover:text-white transition">ENLIST</a>
+        </div>
+
+        <div class="flex items-center gap-6">
+            <a href="login.html" class="text-[11px] font-bold uppercase tracking-[0.3em] text-gray-400 hover:text-white transition-colors">
+                ALREADY A WARRIOR?
+            </a>
+            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-blue-300 flex items-center justify-center text-white text-xs font-bold shadow-lg">
+                <i class="fas fa-fire"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative min-h-screen flex items-center pt-32 overflow-hidden px-6">
+        <div class="max-w-7xl mx-auto w-full">
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                <!-- Left Column -->
+                <div class="reveal">
+                    <div class="inline-flex items-center gap-3 px-5 py-2 rounded-full energy-badge mb-10">
+                        <div class="w-2 h-2 bg-[#ff6b35] rounded-full heartbeat"></div>
+                        <span class="text-[10px] font-black uppercase tracking-[0.4em] text-[#ff6b35]">ELITE PERFORMANCE ZONE</span>
+                    </div>
+
+                    <h1 class="text-7xl md:text-8xl font-black leading-[0.9] mb-8 text-glow">
+                        FORGE YOUR <span class="gradient-text">LEGEND</span>
+                    </h1>
+
+                    <p class="text-xl text-gray-300 mb-10 leading-relaxed font-medium">
+                        Where ordinary ends and extraordinary begins. Join the 1% who don't just train—they transform. Your journey to physical supremacy starts now.
+                    </p>
+
+                    <!-- Stats -->
+                    <div class="grid grid-cols-3 gap-8 mb-12">
+                        <div class="text-center">
+                            <div class="stat-counter">12.8K</div>
+                            <p class="text-sm font-bold uppercase tracking-widest text-gray-300 mt-2">ACTIVE WARRIORS</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="stat-counter">94%</div>
+                            <p class="text-sm font-bold uppercase tracking-widest text-gray-300 mt-2">SUCCESS RATE</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="stat-counter">18.5</div>
+                            <p class="text-sm font-bold uppercase tracking-widest text-gray-300 mt-2">AVG GAINS (LBS)</p>
+                        </div>
+                    </div>
+
+                    <!-- CTA Buttons -->
+                    <div class="flex flex-col sm:flex-row gap-6">
+                        <button onclick="scrollToSection('enroll')" class="energy-btn px-12 py-6 rounded-2xl text-lg font-bold shadow-2xl">
+                            <i class="fas fa-fist-raised mr-3"></i> ENLIST NOW
+                        </button>
+                        <button onclick="scrollToSection('features')" class="px-10 py-6 rounded-2xl text-lg font-bold border-2 border-gray-700 hover:border-[#ff6b35] hover:text-[#ff6b35] transition-all">
+                            <i class="fas fa-play mr-3"></i> WATCH PROTOCOL
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Right Column - Performance Stats -->
+                <div class="reveal delay-1">
+                    <div class="ultra-glass rounded-3xl p-10">
+                        <div class="text-center mb-10">
+                            <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-[#ff6b35] to-[#0071e3] flex items-center justify-center mx-auto mb-6 shadow-2xl">
+                                <i class="fas fa-trophy text-white text-3xl"></i>
+                            </div>
+                            <h3 class="text-3xl font-black mb-3">PROVEN RESULTS</h3>
+                            <p class="text-gray-400">Average warrior transformation metrics</p>
+                        </div>
+
+                        <!-- Performance Metrics -->
+                        <div class="space-y-8">
+                            <div>
+                                <div class="flex justify-between mb-3">
+                                    <span class="font-bold text-white">STRENGTH GAINS</span>
+                                    <span class="font-black text-[#ff6b35]">+42%</span>
+                                </div>
+                                <div class="perf-bar">
+                                    <div class="perf-bar-fill" style="width: 85%"></div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="flex justify-between mb-3">
+                                    <span class="font-bold text-white">ENDURANCE BOOST</span>
+                                    <span class="font-black text-[#0071e3]">+67%</span>
+                                </div>
+                                <div class="perf-bar">
+                                    <div class="perf-bar-fill" style="width: 90%"></div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="flex justify-between mb-3">
+                                    <span class="font-bold text-white">BODY COMPOSITION</span>
+                                    <span class="font-black text-[#ffd166]">+38%</span>
+                                </div>
+                                <div class="perf-bar">
+                                    <div class="perf-bar-fill" style="width: 75%"></div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="flex justify-between mb-3">
+                                    <span class="font-bold text-white">RECOVERY SPEED</span>
+                                    <span class="font-black text-green-400">+52%</span>
+                                </div>
+                                <div class="perf-bar">
+                                    <div class="perf-bar-fill" style="width: 88%"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Motivational Quote -->
+                        <div class="mt-12 pt-8 border-t border-gray-800">
+                            <p class="text-lg font-semibold italic text-center text-gray-300">
+                                "The only limit to your transformation is the one you set yourself."
+                            </p>
+                            <p class="text-sm font-bold text-[#ff6b35] text-center mt-2">— WellNest Warrior Code</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section id="stats" class="py-32 px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-20 reveal">
+                <h2 class="text-6xl md:text-8xl font-black tracking-tighter mb-8">BUILT FOR <span class="gradient-text">DOMINANCE</span></h2>
+                <p class="text-2xl text-gray-400 max-w-3xl mx-auto font-medium">Quantifiable results that separate warriors from spectators</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-32">
+                <div class="ultra-glass p-10 rounded-3xl reveal">
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#ff6b35] to-[#ffd166] flex items-center justify-center mb-8">
+                        <i class="fas fa-dumbbell text-white text-2xl"></i>
+                    </div>
+                    <div class="stat-counter mb-4">3.2x</div>
+                    <h4 class="text-xl font-bold mb-2">Strength Multiplier</h4>
+                    <p class="text-gray-400 text-sm">Average strength gains in first 90 days</p>
+                </div>
+
+                <div class="ultra-glass p-10 rounded-3xl reveal delay-1">
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#0071e3] to-blue-300 flex items-center justify-center mb-8">
+                        <i class="fas fa-heartbeat text-white text-2xl"></i>
+                    </div>
+                    <div class="stat-counter mb-4">94%</div>
+                    <h4 class="text-xl font-bold mb-2">Focus Enhancement</h4>
+                    <p class="text-gray-400 text-sm">Improved cognitive performance</p>
+                </div>
+
+                <div class="ultra-glass p-10 rounded-3xl reveal delay-2">
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-green-500 to-green-300 flex items-center justify-center mb-8">
+                        <i class="fas fa-bed text-white text-2xl"></i>
+                    </div>
+                    <div class="stat-counter mb-4">+42%</div>
+                    <h4 class="text-xl font-bold mb-2">Sleep Quality</h4>
+                    <p class="text-gray-400 text-sm">Deep sleep optimization</p>
+                </div>
+
+                <div class="ultra-glass p-10 rounded-3xl reveal delay-3">
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-purple-300 flex items-center justify-center mb-8">
+                        <i class="fas fa-users text-white text-2xl"></i>
+                    </div>
+                    <div class="stat-counter mb-4">18.5</div>
+                    <h4 class="text-xl font-bold mb-2">Daily Energy</h4>
+                    <p class="text-gray-400 text-sm">Peak performance hours per day</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Feature Showcase -->
+    <section id="features" class="py-32 px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-20 reveal">
+                <div class="inline-flex items-center gap-3 px-6 py-3 rounded-full energy-badge mb-8">
+                    <i class="fas fa-star text-[#ff6b35]"></i>
+                    <span class="text-[10px] font-black uppercase tracking-[0.4em] text-[#ff6b35]">THE WARRIOR'S EDGE</span>
+                </div>
+                <h2 class="text-6xl md:text-8xl font-black tracking-tighter mb-8">YOUR <span class="gradient-text">ARSENAL</span></h2>
+                <p class="text-2xl text-gray-400 max-w-3xl mx-auto font-medium">Everything you need to transform potential into power</p>
+            </div>
+
+            <div class="grid lg:grid-cols-3 gap-8">
+                <div class="ultra-glass p-10 rounded-3xl reveal">
+                    <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-[#ff6b35] to-[#ffd166] flex items-center justify-center mb-8">
+                        <i class="fas fa-dna text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-3xl font-bold mb-6">Molecular Blueprint</h3>
+                    <p class="text-gray-400 mb-8 leading-relaxed">Your unique genetic profile mapped to optimize strength, endurance, and recovery.</p>
+                    <div class="flex flex-wrap gap-3">
+                        <span class="px-4 py-2 bg-black/40 text-[#ff6b35] rounded-full text-xs font-bold">Genomics</span>
+                        <span class="px-4 py-2 bg-black/40 text-[#0071e3] rounded-full text-xs font-bold">Metabolomics</span>
+                        <span class="px-4 py-2 bg-black/40 text-[#ffd166] rounded-full text-xs font-bold">Epigenetics</span>
+                    </div>
+                </div>
+
+                <div class="ultra-glass p-10 rounded-3xl reveal delay-1">
+                    <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-[#0071e3] to-blue-300 flex items-center justify-center mb-8">
+                        <i class="fas fa-brain text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-3xl font-bold mb-6">Neural Optimization</h3>
+                    <p class="text-gray-400 mb-8 leading-relaxed">Enhance focus, willpower, and mind-muscle connection with cognitive protocols.</p>
+                    <div class="flex flex-wrap gap-3">
+                        <span class="px-4 py-2 bg-black/40 text-[#ff6b35] rounded-full text-xs font-bold">Focus Training</span>
+                        <span class="px-4 py-2 bg-black/40 text-[#0071e3] rounded-full text-xs font-bold">Neurofeedback</span>
+                        <span class="px-4 py-2 bg-black/40 text-[#ffd166] rounded-full text-xs font-bold">Mental Toughness</span>
+                    </div>
+                </div>
+
+                <div class="ultra-glass p-10 rounded-3xl reveal delay-2">
+                    <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-green-500 to-green-300 flex items-center justify-center mb-8">
+                        <i class="fas fa-shield-alt text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-3xl font-bold mb-6">Recovery Systems</h3>
+                    <p class="text-gray-400 mb-8 leading-relaxed">Advanced protocols for muscle repair, inflammation control, and supercompensation.</p>
+                    <div class="flex flex-wrap gap-3">
+                        <span class="px-4 py-2 bg-black/40 text-[#ff6b35] rounded-full text-xs font-bold">Sleep Science</span>
+                        <span class="px-4 py-2 bg-black/40 text-[#0071e3] rounded-full text-xs font-bold">Nutrition Timing</span>
+                        <span class="px-4 py-2 bg-black/40 text-[#ffd166] rounded-full text-xs font-bold">Active Recovery</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Warriors Council -->
+    <section id="council" class="py-32 px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-20 reveal">
+                <h2 class="text-6xl md:text-8xl font-black tracking-tighter mb-8">THE <span class="gradient-text">VANGUARD</span></h2>
+                <p class="text-2xl text-gray-400 max-w-3xl mx-auto font-medium">Led by elite athletes, scientists, and peak performance experts</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Marcus "Iron" Jones -->
+                <div class="warrior-card reveal">
+                    <img src="https://australian.physio/sites/default/files/F1F_July%2024_345X470.png" 
+                         class="warrior-image" 
+                         alt="Marcus Jones - Strength Architect">
+                    <div class="warrior-overlay">
+                        <span class="warrior-tag" style="border-color: #ff6b35; color: #ff6b35;">STRENGTH ARCHITECT</span>
+                        <h3 class="text-3xl font-black mb-2">MARCUS  JONES</h3>
+                        <p class="text-gray-300 mb-4">Former powerlifting champion, 12+ years strength coaching</p>
+                        <div class="flex flex-wrap gap-4">
+                            <span class="text-sm flex items-center gap-2">
+                                <i class="fas fa-trophy text-[#ffd166]"></i> 3x World Champion
+                            </span>
+                            <span class="text-sm flex items-center gap-2">
+                                <i class="fas fa-graduation-cap text-[#0071e3]"></i> PhD Biomechanics
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dr. Elena Rodriguez -->
+                <div class="warrior-card reveal delay-1">
+                    <img src="https://iskandarcenter.com/wp-content/uploads/2021/06/Dr.-Iskandar-Headshot.jpg" 
+                         class="warrior-image" 
+                         alt="Dr. Mark Rodriguez - Performance Scientist">
+                    <div class="warrior-overlay">
+                        <span class="warrior-tag" style="border-color: #0071e3; color: #0071e3;">PERFORMANCE SCIENTIST</span>
+                        <h3 class="text-3xl font-black mb-2">DR. Mark RODRIGUEZ</h3>
+                        <p class="text-gray-300 mb-4">Metabolic biochemist, Olympic team consultant</p>
+                        <div class="flex flex-wrap gap-4">
+                            <span class="text-sm flex items-center gap-2">
+                                <i class="fas fa-flask text-[#ffd166]"></i> MIT Researcher
+                            </span>
+                            <span class="text-sm flex items-center gap-2">
+                                <i class="fas fa-medal text-[#ff6b35]"></i> 8 Olympic Athletes
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dr. Alaric Thorne -->
+                <div class="warrior-card reveal delay-2">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=1200" 
+                         class="warrior-image" 
+                         alt="Dr. Alaric Thorne - Neuro Performance">
+                    <div class="warrior-overlay">
+                        <span class="warrior-tag" style="border-color: #10b981; color: #10b981;">NEURO PERFORMANCE</span>
+                        <h3 class="text-3xl font-black mb-2">DR. ALARIC THORNE</h3>
+                        <p class="text-gray-300 mb-4">Cognitive neuroscientist, Special Forces trainer</p>
+                        <div class="flex flex-wrap gap-4">
+                            <span class="text-sm flex items-center gap-2">
+                                <i class="fas fa-microchip text-[#0071e3]"></i> Neurotech Patents
+                            </span>
+                            <span class="text-sm flex items-center gap-2">
+                                <i class="fas fa-user-secret text-[#ff6b35]"></i> Military Consultant
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Signup Section -->
+    <section id="enroll" class="py-32 px-6">
+        <div class="max-w-5xl mx-auto">
+            <div class="text-center mb-20 reveal">
+                <h2 class="text-7xl md:text-9xl font-black tracking-tighter mb-8">ENLIST <span class="gradient-text">NOW</span></h2>
+                <p class="text-2xl text-gray-400 max-w-3xl mx-auto font-medium">Begin your transformation. The arena awaits.</p>
+            </div>
+
+            <div class="ultra-glass rounded-[40px] p-10 md:p-16 reveal">
+                <div class="text-center mb-16">
+                    <div class="w-24 h-24 rounded-3xl bg-gradient-to-br from-[#ff6b35] to-[#0071e3] flex items-center justify-center mx-auto mb-8 shadow-2xl">
+                        <i class="fas fa-user-plus text-white text-3xl"></i>
+                    </div>
+                    <h3 class="text-4xl font-black mb-4">CREATE WARRIOR PROFILE</h3>
+                    <p class="text-gray-400">Your journey begins with a comprehensive performance assessment</p>
+                </div>
+
+                <form id="signupForm" onsubmit="handleSignup(event)" class="space-y-10">
+                    <!-- Row 1 -->
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <div class="space-y-4">
+                            <label class="text-sm font-bold text-white uppercase tracking-widest flex items-center gap-2">
+                                <i class="fas fa-user text-[#ff6b35]"></i> WARRIOR NAME
+                            </label>
+                            <input type="text" id="fullName" required placeholder="Enter your name" 
+                                   class="cyber-input w-full px-6 py-5">
+                        </div>
+                        <div class="space-y-4">
+                            <label class="text-sm font-bold text-white uppercase tracking-widest flex items-center gap-2">
+                                <i class="fas fa-birthday-cake text-[#0071e3]"></i> AGE
+                            </label>
+                            <input type="number" id="age" required placeholder="Your age" 
+                                   class="cyber-input w-full px-6 py-5">
+                        </div>
+                    </div>
+
+                    <!-- Row 2 -->
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <div class="space-y-4">
+                            <label class="text-sm font-bold text-white uppercase tracking-widest flex items-center gap-2">
+                                <i class="fas fa-venus-mars text-[#ffd166]"></i> GENDER
+                            </label>
+                            <select id="gender" class="cyber-input w-full px-6 py-5 appearance-none">
+                                <option class="bg-gray-900">Male</option>
+                                <option class="bg-gray-900">Female</option>
+                                <option class="bg-gray-900">Non-Binary</option>
+                            </select>
+                        </div>
+                        <div class="space-y-4">
+                            <label class="text-sm font-bold text-white uppercase tracking-widest flex items-center gap-2">
+                                <i class="fas fa-envelope text-[#ff6b35]"></i> WARRIOR EMAIL
+                            </label>
+                            <input type="email" id="email" required placeholder="yourname@elite.performance" 
+                                   class="cyber-input w-full px-6 py-5">
+                        </div>
+                    </div>
+
+                    <!-- Row 3 -->
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <div class="space-y-4">
+                            <label class="text-sm font-bold text-white uppercase tracking-widest flex items-center gap-2">
+                                <i class="fas fa-key text-[#0071e3]"></i> SECURITY CODE
+                            </label>
+                            <input type="password" id="pass" required placeholder="Create secure password" 
+                                   class="cyber-input w-full px-6 py-5">
+                        </div>
+                        <div class="space-y-4">
+                            <label class="text-sm font-bold text-white uppercase tracking-widest flex items-center gap-2">
+                                <i class="fas fa-redo text-[#ffd166]"></i> CONFIRM CODE
+                            </label>
+                            <input type="password" id="confirmPass" required placeholder="Confirm password" 
+                                   class="cyber-input w-full px-6 py-5">
+                        </div>
+                    </div>
+
+                    <!-- Goals Selection -->
+                    <div class="space-y-4">
+                        <label class="text-sm font-bold text-white uppercase tracking-widest flex items-center gap-2">
+                            <i class="fas fa-bullseye text-[#ff6b35]"></i> PRIMARY GOAL
+                        </label>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <label class="flex items-center gap-3 p-4 rounded-2xl bg-black/40 border border-gray-800 hover:border-[#ff6b35] cursor-pointer transition-all">
+                                <input type="radio" name="goal" value="strength" class="hidden">
+                                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#ff6b35] to-[#ffd166] flex items-center justify-center">
+                                    <i class="fas fa-dumbbell text-white"></i>
+                                </div>
+                                <div>
+                                    <p class="font-bold">Maximum Strength</p>
+                                    <p class="text-xs text-gray-400">Power & force production</p>
+                                </div>
+                            </label>
+                            <label class="flex items-center gap-3 p-4 rounded-2xl bg-black/40 border border-gray-800 hover:border-[#0071e3] cursor-pointer transition-all">
+                                <input type="radio" name="goal" value="hypertrophy" class="hidden" checked>
+                                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0071e3] to-blue-300 flex items-center justify-center">
+                                    <i class="fas fa-weight text-white"></i>
+                                </div>
+                                <div>
+                                    <p class="font-bold">Muscle Growth</p>
+                                    <p class="text-xs text-gray-400">Hypertrophy & size</p>
+                                </div>
+                            </label>
+                            <label class="flex items-center gap-3 p-4 rounded-2xl bg-black/40 border border-gray-800 hover:border-green-500 cursor-pointer transition-all">
+                                <input type="radio" name="goal" value="endurance" class="hidden">
+                                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-green-500 to-green-300 flex items-center justify-center">
+                                    <i class="fas fa-running text-white"></i>
+                                </div>
+                                <div>
+                                    <p class="font-bold">Endurance</p>
+                                    <p class="text-xs text-gray-400">Stamina & conditioning</p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Terms -->
+                    <div class="flex items-center gap-3">
+                        <input type="checkbox" id="terms" required class="w-5 h-5 rounded-md bg-black/40 border border-gray-700">
+                        <label for="terms" class="text-sm text-gray-300">
+                            I accept the <a href="#" class="text-[#ff6b35] hover:underline">Warrior Code</a> and commit to the transformation journey
+                        </label>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" id="signupBtn" 
+                            class="energy-btn w-full py-8 rounded-2xl text-2xl font-bold shadow-2xl mt-8">
+                        <i class="fas fa-fist-raised mr-3"></i> FORGE MY LEGACY
+                    </button>
+
+                    <!-- Already Member -->
+                    <div class="text-center pt-8 border-t border-gray-800">
+                        <p class="text-gray-400">
+                            Already part of the brotherhood? 
+                            <a href="login.html" class="text-[#ff6b35] font-bold hover:underline ml-2">ENTER THE ARENA</a>
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Live Feed -->
+    <div class="fixed bottom-6 left-6 z-50">
+        <div class="ultra-glass rounded-2xl p-4">
+            <div class="flex items-center gap-3">
+                <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                <div class="text-sm font-bold">
+                    <span class="text-gray-300">LIVE:</span>
+                    <span class="text-[#ff6b35] ml-2">4,287 WARRIORS TRAINING</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Handle signup
+        function handleSignup(e) {
+            e.preventDefault();
+            const pass = document.getElementById('pass').value;
+            const confirmPass = document.getElementById('confirmPass').value;
+            
+            if (pass !== confirmPass) {
+                alert("WARRIOR ALERT: Security codes do not match!");
+                return;
+            }
+            
+            const btn = document.getElementById('signupBtn');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-3"></i> FORGING YOUR LEGACY...';
+            btn.disabled = true;
+            
+            // Animate all performance bars to 100%
+            document.querySelectorAll('.perf-bar-fill').forEach(bar => {
+                bar.style.width = '100%';
+                bar.style.transition = 'width 2s ease';
+            });
+            
+            setTimeout(() => {
+                window.location.href = 'dashboard.html';
+            }, 2000);
+        }
+
+        // Scroll to section
+        function scrollToSection(id) {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Animate counters
+        function animateCounter(element, target) {
+            let current = 0;
+            const increment = target / 100;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    element.textContent = target.toLocaleString();
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(current).toLocaleString();
+                }
+            }, 20);
+        }
+
+        // Initialize animations
+        document.addEventListener('DOMContentLoaded', () => {
+            // Animate stats counters
+            const counters = document.querySelectorAll('.stat-counter');
+            counters.forEach(counter => {
+                const text = counter.textContent;
+                let target;
+                
+                if (text.includes('K')) {
+                    target = parseFloat(text.replace('K', '')) * 1000;
+                } else if (text.includes('%')) {
+                    target = parseFloat(text.replace('%', ''));
+                } else {
+                    target = parseFloat(text);
+                }
+                
+                if (!isNaN(target)) {
+                    counter.textContent = '0';
+                    setTimeout(() => animateCounter(counter, target), 500);
+                }
+            });
+
+            // Goal selection interaction
+            document.querySelectorAll('input[name="goal"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    document.querySelectorAll('label[class*="hover:border-"]').forEach(label => {
+                        label.style.borderColor = '';
+                    });
+                    
+                    const parent = this.closest('label');
+                    if (this.value === 'strength') {
+                        parent.style.borderColor = '#ff6b35';
+                    } else if (this.value === 'hypertrophy') {
+                        parent.style.borderColor = '#0071e3';
+                    } else if (this.value === 'endurance') {
+                        parent.style.borderColor = '#10b981';
+                    }
+                });
+            });
+
+            // Video fallback
+            setTimeout(() => {
+                const video = document.querySelector('video');
+                if (video && video.readyState < 3) {
+                    document.querySelector('.video-background').innerHTML = `
+                        <div style="background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%); width: 100%; height: 100%;">
+                            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
+                                <div class="w-32 h-32 rounded-full bg-gradient-to-br from-[#ff6b35] to-[#0071e3] flex items-center justify-center mx-auto mb-6">
+                                    <i class="fas fa-dumbbell text-white text-5xl"></i>
+                                </div>
+                                <p class="text-white font-bold text-2xl">WELLNEST PERFORMANCE</p>
+                                <p class="text-gray-400 mt-2">Elite Transformation Zone</p>
+                            </div>
+                        </div>
+                    `;
+                }
+            }, 3000);
+
+            // Warrior card hover effects
+            document.querySelectorAll('.warrior-card').forEach(card => {
+                card.addEventListener('mouseenter', () => {
+                    const image = card.querySelector('.warrior-image');
+                    image.style.filter = 'grayscale(0%) brightness(1)';
+                    image.style.transform = 'scale(1.05)';
+                });
+                
+                card.addEventListener('mouseleave', () => {
+                    const image = card.querySelector('.warrior-image');
+                    image.style.filter = 'grayscale(20%) brightness(0.8)';
+                    image.style.transform = 'scale(1)';
+                });
+            });
+        });
+
+        // Reveal on scroll
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('reveal');
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+    </script>
+</body>
+</html>

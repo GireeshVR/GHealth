@@ -1,0 +1,3481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WellNest | Professional Health Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        
+        :root {
+            --wellnest-blue: #0071e3;
+            --wellnest-orange: #ff6b35;
+            --wellnest-gold: #ffd166;
+            --wellnest-gradient: linear-gradient(135deg, #0071e3 0%, #ff6b35 100%);
+            --wellnest-energy: linear-gradient(135deg, #ff6b35 0%, #ffd166 50%, #0071e3 100%);
+        }
+        
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: #0a0a0a; 
+            color: white; 
+        }
+        .apple-card { 
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: saturate(200%) blur(30px);
+            -webkit-backdrop-filter: saturate(200%) blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 24px; 
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease; 
+        }
+        .apple-card:hover { 
+            transform: translateY(-4px); 
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5); 
+        }
+        .btn-primary { 
+            background: linear-gradient(135deg, #ff6b35 0%, #ffd166 50%, #0071e3 100%);
+            background-size: 200% auto;
+            color: white; 
+            border-radius: 980px; 
+            transition: all 0.6s ease;
+            font-weight: 700;
+        }
+        .btn-primary:hover { 
+            background-position: right center;
+            transform: scale(1.02);
+            box-shadow: 0 20px 40px rgba(255, 107, 53, 0.3);
+        }
+        
+        /* Updated Sidebar Styles with Apple-like Animations */
+        aside {
+            width: 5rem;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: saturate(180%) blur(20px);
+            -webkit-backdrop-filter: saturate(180%) blur(20px);
+            border-right: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            z-index: 50;
+        }
+
+        aside:hover {
+            width: 16rem;
+            box-shadow: 0 0 40px rgba(0, 113, 227, 0.15);
+        }
+
+        aside:hover .brand-text {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        aside:hover .sidebar-icon span {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .brand-text {
+            opacity: 0;
+            transform: translateX(-10px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) 0.1s;
+        }
+
+        .sidebar-icon {
+            position: relative;
+            overflow: hidden;
+            border-radius: 14px;
+            padding: 0.75rem;
+            margin: 0.25rem 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-origin: left center;
+            color: rgba(255, 255, 255, 0.6); 
+            cursor: pointer;
+        }
+
+        .sidebar-icon::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 107, 53, 0.1), 
+                transparent);
+            transition: left 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .sidebar-icon:hover::before {
+            left: 100%;
+        }
+
+        .sidebar-icon span {
+            opacity: 0;
+            transform: translateX(-10px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) 0.1s;
+        }
+
+        .sidebar-icon svg {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            min-width: 1.5rem;
+        }
+
+        .sidebar-icon:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(8px) scale(1.02);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .sidebar-icon:hover svg {
+            transform: scale(1.15);
+        }
+
+        .sidebar-icon.active {
+            background: linear-gradient(135deg, 
+                rgba(255, 107, 53, 0.15) 0%, 
+                rgba(0, 113, 227, 0.1) 100%);
+            border: 1px solid rgba(255, 107, 53, 0.2);
+            box-shadow: 0 4px 20px rgba(255, 107, 53, 0.15);
+            color: #ff6b35 !important;
+        }
+
+        .sidebar-icon.active svg {
+            color: #ff6b35;
+            transform: scale(1.1);
+        }
+
+        .sidebar-icon.active::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 60%;
+            background: linear-gradient(to bottom, #ff6b35, #0071e3);
+            border-radius: 2px;
+            animation: pulse 2s infinite;
+        }
+
+        .sign-out-icon:hover {
+            background: rgba(239, 68, 68, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .sign-out-icon:hover svg {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        .progress-bar { 
+            height: 8px; 
+            border-radius: 4px; 
+            background-color: rgba(255, 255, 255, 0.1); 
+            overflow: hidden; 
+        }
+        .progress-fill { 
+            height: 100%; 
+            transition: width 0.8s ease-out; 
+        }
+        .hidden { display: none; }
+        .glass-modal { 
+            background: rgba(10, 10, 10, 0.8); 
+            backdrop-filter: blur(15px); 
+        }
+        input, select { 
+            border: 1px solid rgba(255, 255, 255, 0.2) !important; 
+            background: rgba(0, 0, 0, 0.4) !important; 
+            color: white !important; 
+        }
+        .star-rating { color: #ffd166; cursor: pointer; }
+        .star-rating .far { color: rgba(255, 255, 255, 0.3); }
+        .like-btn:hover { color: #ef4444; }
+        .comment-box { border-left: 3px solid #ff6b35; }
+        
+        /* Animations */
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+                transform: translateY(-50%) scale(1);
+            }
+            50% {
+                opacity: 0.6;
+                transform: translateY(-50%) scale(1.05);
+            }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-3px); }
+            75% { transform: translateX(3px); }
+        }
+
+        @keyframes activeGlow {
+            from {
+                box-shadow: 0 4px 20px rgba(255, 107, 53, 0.15);
+            }
+            to {
+                box-shadow: 0 4px 30px rgba(255, 107, 53, 0.25);
+            }
+        }
+
+        .sidebar-icon.active {
+            animation: activeGlow 3s infinite alternate;
+        }
+
+        .logo-mini {
+            position: relative;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        aside:hover .logo-mini {
+            transform: scale(0.8);
+            opacity: 0;
+        }
+
+        .brand-full {
+            position: absolute;
+            top: 1.5rem;
+            left: 1.5rem;
+            opacity: 0;
+            transform: translateX(-20px);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.1s;
+        }
+
+        aside:hover .brand-full {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* Mobile responsiveness for sidebar */
+        @media (max-width: 768px) {
+            aside {
+                width: 5rem;
+            }
+            
+            aside:hover {
+                width: 16rem;
+                position: absolute;
+                height: 100%;
+                z-index: 100;
+                box-shadow: 20px 0 40px rgba(0, 0, 0, 0.5);
+            }
+        }
+        
+        /* Switch Toggle */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+        
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #475569;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background: linear-gradient(135deg, #ff6b35 0%, #0071e3 100%);
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        
+        /* Range Slider */
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            outline: none;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff6b35 0%, #0071e3 100%);
+            cursor: pointer;
+            border: 3px solid #0a0a0a;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+        }
+        
+        /* Text Effects */
+        .text-glow {
+            text-shadow: 0 0 30px rgba(255, 107, 53, 0.7),
+                         0 0 60px rgba(0, 113, 227, 0.5);
+        }
+        
+        .gradient-text {
+            background: var(--wellnest-energy);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* Input focus */
+        input:focus, select:focus {
+            outline: none;
+            border-color: #ff6b35 !important;
+            box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.15);
+        }
+        
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 12px 24px;
+            background: rgba(30, 41, 59, 0.9);
+            backdrop-filter: blur(20px);
+            color: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            z-index: 1000;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* Community Challenge Animation */
+        .challenge-joined {
+            animation: celebrate 0.5s ease;
+        }
+
+        @keyframes celebrate {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+<div class="flex min-h-screen">
+    <aside class="flex flex-col items-center lg:items-start p-6 space-y-8 sticky top-0 h-screen z-40">
+        <!-- Brand Logo with Animation -->
+        <div class="relative w-full mb-4">
+            <div class="logo-mini text-2xl font-bold text-white lg:hidden">W</div>
+            <div class="brand-full text-2xl font-black tracking-tighter italic">
+                <span class="text-white">WELLNEST</span><span class="text-[#ff6b35]">.</span>
+            </div>
+        </div>
+        
+        <nav class="flex flex-col space-y-2 w-full">
+            <div onclick="showSection('dashboard')" id="nav-dashboard" class="sidebar-icon active flex items-center space-x-4">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                <span class="font-semibold">Overview</span>
+            </div>
+            <div onclick="showSection('activity')" id="nav-activity" class="sidebar-icon flex items-center space-x-4">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                <span class="font-semibold">Workouts</span>
+            </div>
+            <div onclick="showSection('nutrition')" id="nav-nutrition" class="sidebar-icon flex items-center space-x-4">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                <span class="font-semibold">Nutrition</span>
+            </div>
+            <div onclick="showSection('trainers')" id="nav-trainers" class="sidebar-icon flex items-center space-x-4">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                <span class="font-semibold">Coaches</span>
+            </div>
+            <div onclick="showSection('blog')" id="nav-blog" class="sidebar-icon flex items-center space-x-4">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10l4 4v10a2 2 0 012 2zM7 8h5m-5 4h8m-8 4h8"></path></svg>
+                <span class="font-semibold">Community</span>
+            </div>
+            <div onclick="showSection('profile')" id="nav-profile" class="sidebar-icon flex items-center space-x-4">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                <span class="font-semibold">Settings</span>
+            </div>
+        </nav>
+        
+        <!-- Sign Out Button -->
+        <div class="mt-auto pt-8 w-full">
+            <div onclick="signOut()" class="sidebar-icon sign-out-icon flex items-center space-x-4 text-red-400 hover:bg-red-500/10 cursor-pointer">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                </svg>
+                <span class="font-semibold">Sign Out</span>
+            </div>
+        </div>
+    </aside>
+
+    <main class="flex-1 p-8 lg:p-12 overflow-y-auto">
+        
+        <!-- Dashboard Section -->
+        <div id="section-dashboard" class="content-section">
+            <header class="flex flex-col lg:flex-row lg:items-center justify-between mb-12">
+                <div>
+                    <h1 class="text-4xl font-extrabold tracking-tight">Morning, Gireesh</h1>
+                    <p class="text-gray-400 mt-2 text-lg">Saturday, January 3, 2026</p>
+                </div>
+                <div class="mt-6 lg:mt-0 p-4 apple-card flex items-center space-x-4">
+                    <div class="p-3 bg-gradient-to-br from-[#ff6b35] to-[#0071e3] rounded-full text-white">💧</div>
+                    <div>
+                        <h4 class="font-bold text-sm">Hydration Goal</h4>
+                        <p class="text-gray-400 text-xs mt-1"><span id="dash-water-count">6</span> / 8 Glasses Today</p>
+                    </div>
+                </div>
+            </header>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="apple-card p-6">
+                    <div class="flex justify-between items-center mb-2">
+                        <p class="text-gray-400 font-bold text-xs uppercase tracking-wider">Steps Today</p>
+                        <div class="flex space-x-2">
+                            <input type="number" id="steps-input" placeholder="Add steps" class="w-20 p-1 text-sm border rounded-lg text-center bg-black/40">
+                            <button onclick="addCustomSteps()" class="text-xs text-[#ff6b35] font-bold bg-[#ff6b35]/10 px-2 py-1 rounded-lg">Add</button>
+                        </div>
+                    </div>
+                    <div class="text-3xl font-black text-white" id="dash-steps">8,234</div>
+                    <div class="progress-bar mt-4"><div id="steps-progress" class="progress-fill" style="background: linear-gradient(135deg, #0071e3 0%, #ff6b35 100%); width: 82.34%;"></div></div>
+                    <p class="text-xs text-gray-500 mt-2">Goal: 10,000 steps</p>
+                </div>
+                <div class="apple-card p-6">
+                    <div class="flex justify-between items-center mb-2">
+                        <p class="text-gray-400 font-bold text-xs uppercase tracking-wider">Calories Burned</p>
+                        <div class="flex space-x-2">
+                            <input type="number" id="calories-input" placeholder="Add kcal" class="w-20 p-1 text-sm border rounded-lg text-center bg-black/40">
+                            <button onclick="addCustomCalories()" class="text-xs text-[#ff6b35] font-bold bg-[#ff6b35]/10 px-2 py-1 rounded-lg">Add</button>
+                        </div>
+                    </div>
+                    <div class="text-3xl font-black text-white" id="dash-calories">2,150</div>
+                    <p class="text-xs text-gray-400 mt-2 font-semibold">Goal: 2,500 kcal</p>
+                    <div class="progress-bar mt-2"><div id="calories-progress" class="progress-fill" style="background: linear-gradient(135deg, #ff6b35 0%, #0071e3 100%); width: 86%;"></div></div>
+                </div>
+                <div class="apple-card p-6">
+                    <div class="flex justify-between items-center mb-2">
+                        <p class="text-gray-400 font-bold text-xs uppercase tracking-wider">Sleep</p>
+                        <div class="flex space-x-2">
+                            <input type="number" step="0.1" id="sleep-input" placeholder="Add hours" class="w-20 p-1 text-sm border rounded-lg text-center bg-black/40">
+                            <button onclick="addCustomSleep()" class="text-xs text-[#ffd166] font-bold bg-[#ffd166]/10 px-2 py-1 rounded-lg">Add</button>
+                        </div>
+                    </div>
+                    <div class="text-3xl font-black text-white"><span id="sleep-hours">7.2</span> <span class="text-sm font-normal text-gray-400">hrs</span></div>
+                    <p class="text-xs text-[#ffd166] mt-2 font-bold" id="sleep-status">Deep sleep +12%</p>
+                    <div class="progress-bar mt-2"><div id="sleep-progress" class="progress-fill" style="background: linear-gradient(135deg, #ffd166 0%, #ff6b35 100%); width: 90%;"></div></div>
+                </div>
+                <div class="apple-card p-6 bg-gradient-to-br from-[#0071e3] to-[#ff6b35] text-white border-0">
+                    <p class="text-white/80 font-bold text-xs uppercase tracking-wider mb-2">Current BMI</p>
+                    <div class="text-3xl font-black" id="bmi-value">22.4</div>
+                    <div id="bmi-status" class="mt-2 inline-block px-2 py-1 bg-white/20 rounded-lg text-xs font-bold uppercase">Healthy Weight</div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="apple-card p-8 lg:col-span-2">
+                    <h3 class="text-xl font-bold mb-8">Weekly Activity</h3>
+                    <canvas id="activityChart" height="120"></canvas>
+                </div>
+                <div class="apple-card p-8">
+                    <h3 class="text-xl font-bold mb-6">Nutrition Overview</h3>
+                    <div class="space-y-6">
+                        <div>
+                            <div class="flex justify-between text-xs font-bold mb-2"><span class="text-gray-400">PROTEIN</span><span id="protein-display" class="text-white">120g / 150g</span></div>
+                            <div class="progress-bar"><div id="protein-progress" class="progress-fill" style="background: linear-gradient(135deg, #ff6b35 0%, #0071e3 100%); width: 80%;"></div></div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs font-bold mb-2"><span class="text-gray-400">CARBS</span><span id="carbs-display" class="text-white">210g / 300g</span></div>
+                            <div class="progress-bar"><div id="carbs-progress" class="progress-fill" style="background: linear-gradient(135deg, #0071e3 0%, #ff6b35 100%); width: 70%;"></div></div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs font-bold mb-2"><span class="text-gray-400">FATS</span><span id="fats-display" class="text-white">45g / 70g</span></div>
+                            <div class="progress-bar"><div id="fats-progress" class="progress-fill" style="background: linear-gradient(135deg, #ffd166 0%, #ff6b35 100%); width: 64%;"></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Workouts Section - ENHANCED VERSION -->
+        <div id="section-activity" class="content-section hidden">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between mb-8">
+                <div>
+                    <h1 class="text-4xl font-extrabold">Workout Tracker</h1>
+                    <p class="text-gray-400 mt-2">Track, analyze, and improve your fitness journey</p>
+                </div>
+                <div class="flex space-x-4 mt-4 lg:mt-0">
+                    <button class="px-6 py-3 apple-card font-bold hover:bg-white/5" onclick="showWorkoutHistory()">
+                        <i class="fas fa-history mr-2"></i>History
+                    </button>
+                    <button class="btn-primary px-8 py-3 font-bold" onclick="logWorkoutModal()">
+                        <i class="fas fa-plus mr-2"></i>Log Workout
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Stats Overview -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="apple-card p-6">
+                    <div class="flex items-center space-x-4">
+                        <div class="p-3 bg-gradient-to-br from-[#ff6b35] to-[#0071e3] text-white rounded-full">
+                            <i class="fas fa-fire"></i>
+                        </div>
+                        <div>
+                            <p class="text-gray-400 text-sm font-bold">Total Calories</p>
+                            <p class="text-2xl font-black text-white" id="total-calories">2,150</p>
+                        </div>
+                    </div>
+                    <div class="mt-4 text-xs text-[#ffd166] font-bold">
+                        <i class="fas fa-arrow-up mr-1"></i>12% from last week
+                    </div>
+                </div>
+                
+                <div class="apple-card p-6">
+                    <div class="flex items-center space-x-4">
+                        <div class="p-3 bg-gradient-to-br from-[#0071e3] to-[#ff6b35] text-white rounded-full">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div>
+                            <p class="text-gray-400 text-sm font-bold">Workout Time</p>
+                            <p class="text-2xl font-black text-white" id="total-time">1h 15m</p>
+                        </div>
+                    </div>
+                    <div class="mt-4 text-xs text-[#ffd166] font-bold">
+                        <i class="fas fa-arrow-up mr-1"></i>8% from last week
+                    </div>
+                </div>
+                
+                <div class="apple-card p-6">
+                    <div class="flex items-center space-x-4">
+                        <div class="p-3 bg-gradient-to-br from-[#ff6b35] to-[#ffd166] text-white rounded-full">
+                            <i class="fas fa-dumbbell"></i>
+                        </div>
+                        <div>
+                            <p class="text-gray-400 text-sm font-bold">Sessions</p>
+                            <p class="text-2xl font-black text-white" id="total-sessions">2</p>
+                        </div>
+                    </div>
+                    <div class="mt-4 text-xs text-[#ffd166] font-bold">
+                        <i class="fas fa-arrow-up mr-1"></i>3 more than last week
+                    </div>
+                </div>
+                
+                <div class="apple-card p-6">
+                    <div class="flex items-center space-x-4">
+                        <div class="p-3 bg-gradient-to-br from-[#ff6b35] to-[#0071e3] text-white rounded-full">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <div>
+                            <p class="text-gray-400 text-sm font-bold">Current Streak</p>
+                            <p class="text-2xl font-black text-white" id="current-streak">7 days</p>
+                        </div>
+                    </div>
+                    <div class="mt-4 text-xs text-[#ffd166] font-bold">
+                        <i class="fas fa-fire mr-1"></i>Keep it up!
+                    </div>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Main Content - Today's Workouts & Log Form -->
+                <div class="lg:col-span-2 space-y-8">
+                    <!-- Today's Workouts -->
+                    <div class="apple-card p-8">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-xl font-bold">Today's Workouts</h3>
+                            <div class="text-sm text-gray-400">
+                                <i class="fas fa-calendar-day mr-1"></i> January 3, 2026
+                            </div>
+                        </div>
+                        <div id="workout-list" class="space-y-4">
+                            <div class="flex justify-between items-center p-5 apple-card border border-[#0071e3]/30">
+                                <div class="flex items-center space-x-4">
+                                    <div class="p-3 bg-gradient-to-br from-[#0071e3] to-blue-400 text-white rounded-full font-bold text-lg">🏃</div>
+                                    <div>
+                                        <p class="font-bold">Morning Run</p>
+                                        <p class="text-xs text-gray-400">6:30 AM • Outdoor</p>
+                                        <div class="flex items-center mt-1">
+                                            <span class="text-xs bg-[#0071e3]/20 text-blue-300 px-2 py-1 rounded-full mr-2">Cardio</span>
+                                            <span class="text-xs bg-white/10 text-gray-300 px-2 py-1 rounded-full">Moderate</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <p class="font-bold text-lg">30 min</p>
+                                    <p class="text-sm text-[#ff6b35] font-bold">320 kcal</p>
+                                    <div class="mt-2">
+                                        <button class="text-xs text-blue-300 hover:text-blue-200" onclick="viewWorkoutDetails(this, 'Morning Run', 30, 320, 'Running')">
+                                            <i class="fas fa-chart-line mr-1"></i>View Details
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex justify-between items-center p-5 apple-card border border-[#ff6b35]/30">
+                                <div class="flex items-center space-x-4">
+                                    <div class="p-3 bg-gradient-to-br from-[#ff6b35] to-orange-400 text-white rounded-full font-bold text-lg">🧘</div>
+                                    <div>
+                                        <p class="font-bold">Evening Yoga</p>
+                                        <p class="text-xs text-gray-400">6:00 PM • Home</p>
+                                        <div class="flex items-center mt-1">
+                                            <span class="text-xs bg-[#ff6b35]/20 text-orange-300 px-2 py-1 rounded-full mr-2">Flexibility</span>
+                                            <span class="text-xs bg-white/10 text-gray-300 px-2 py-1 rounded-full">Light</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <p class="font-bold text-lg">45 min</p>
+                                    <p class="text-sm text-[#ff6b35] font-bold">180 kcal</p>
+                                    <div class="mt-2">
+                                        <button class="text-xs text-orange-300 hover:text-orange-200" onclick="viewWorkoutDetails(this, 'Evening Yoga', 45, 180, 'Yoga')">
+                                            <i class="fas fa-chart-line mr-1"></i>View Details
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Empty State -->
+                        <div id="empty-workouts" class="text-center py-10 hidden">
+                            <div class="text-5xl mb-4">🏋️</div>
+                            <h4 class="text-xl font-bold mb-2">No workouts logged today</h4>
+                            <p class="text-gray-400 mb-6">Start your fitness journey by logging your first workout!</p>
+                            <button onclick="logWorkoutModal()" class="btn-primary px-6 py-3 font-bold">
+                                <i class="fas fa-plus mr-2"></i>Log First Workout
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Workout History Preview -->
+                    <div class="apple-card p-8">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-xl font-bold">Recent Workout History</h3>
+                            <button onclick="showWorkoutHistory()" class="text-sm text-[#ff6b35] font-bold">
+                                View All
+                            </button>
+                        </div>
+                        <div id="workout-history-preview" class="space-y-4">
+                            <!-- History items will be populated here -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Sidebar - Stats & Quick Actions -->
+                <div class="space-y-8">
+                    <!-- Weekly Progress Chart -->
+                    <div class="apple-card p-8">
+                        <h3 class="text-xl font-bold mb-6">Weekly Progress</h3>
+                        <div class="h-64">
+                            <canvas id="weeklyWorkoutChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <!-- Weekly Progress Bars -->
+                    <div class="apple-card p-8">
+                        <h3 class="text-xl font-bold mb-6">Weekly Goals</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <div class="flex justify-between text-xs font-bold mb-2">
+                                    <span class="text-gray-400">Cardio</span>
+                                    <span id="cardio-progress-text" class="text-white">85%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div id="cardio-progress-bar" class="progress-fill" style="background: linear-gradient(135deg, #0071e3 0%, #ff6b35 100%); width: 85%;"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-xs font-bold mb-2">
+                                    <span class="text-gray-400">Strength</span>
+                                    <span id="strength-progress-text" class="text-white">70%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div id="strength-progress-bar" class="progress-fill" style="background: linear-gradient(135deg, #ff6b35 0%, #0071e3 100%); width: 70%;"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-xs font-bold mb-2">
+                                    <span class="text-gray-400">Flexibility</span>
+                                    <span id="flexibility-progress-text" class="text-white">92%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div id="flexibility-progress-bar" class="progress-fill" style="background: linear-gradient(135deg, #ffd166 0%, #ff6b35 100%); width: 92%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Actions -->
+                    <div class="apple-card p-8">
+                        <h3 class="text-xl font-bold mb-6">Quick Workouts</h3>
+                        <div class="space-y-4">
+                            <button onclick="startQuickWorkout('5K Run', 25, 'Running')" class="flex items-center justify-between p-4 apple-card hover:bg-white/5 w-full transition-colors border border-[#0071e3]/20">
+                                <div class="flex items-center space-x-3">
+                                    <div class="p-2 bg-gradient-to-br from-[#0071e3] to-blue-400 text-white rounded-full">🏃</div>
+                                    <div class="text-left">
+                                        <span class="font-bold block text-white">5K Run</span>
+                                        <span class="text-sm text-gray-400">Cardio • 25 min</span>
+                                    </div>
+                                </div>
+                                <i class="fas fa-chevron-right text-gray-500"></i>
+                            </button>
+                            
+                            <button onclick="startQuickWorkout('Full Body', 40, 'Weightlifting')" class="flex items-center justify-between p-4 apple-card hover:bg-white/5 w-full transition-colors border border-[#ff6b35]/20">
+                                <div class="flex items-center space-x-3">
+                                    <div class="p-2 bg-gradient-to-br from-[#ff6b35] to-orange-400 text-white rounded-full">🏋️</div>
+                                    <div class="text-left">
+                                        <span class="font-bold block text-white">Full Body</span>
+                                        <span class="text-sm text-gray-400">Strength • 40 min</span>
+                                    </div>
+                                </div>
+                                <i class="fas fa-chevron-right text-gray-500"></i>
+                            </button>
+                            
+                            <button onclick="startQuickWorkout('Morning Yoga', 20, 'Yoga')" class="flex items-center justify-between p-4 apple-card hover:bg-white/5 w-full transition-colors border border-[#ffd166]/20">
+                                <div class="flex items-center space-x-3">
+                                    <div class="p-2 bg-gradient-to-br from-[#ffd166] to-yellow-400 text-white rounded-full">🧘</div>
+                                    <div class="text-left">
+                                        <span class="font-bold block text-white">Morning Yoga</span>
+                                        <span class="text-sm text-gray-400">Flexibility • 20 min</span>
+                                    </div>
+                                </div>
+                                <i class="fas fa-chevron-right text-gray-500"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Nutrition Section -->
+        <div id="section-nutrition" class="content-section hidden">
+            <div class="flex justify-between items-center mb-8">
+                <h1 class="text-4xl font-extrabold">Nutrition Tracker</h1>
+                <button class="btn-primary px-8 py-3 font-bold" onclick="openAddMealModal()">+ Add Meal</button>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2">
+                    <div class="apple-card p-8">
+                        <h3 class="text-xl font-bold mb-6">Today's Meals</h3>
+                        <div id="meal-list" class="space-y-4">
+                            <div class="p-6 apple-card border border-[#0071e3]/30">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <p class="text-xs font-black text-blue-300 uppercase mb-1">BREAKFAST</p>
+                                        <h4 class="font-bold text-white">Oatmeal with fruits & nuts</h4>
+                                    </div>
+                                    <button onclick="removeMeal(this, 320)" class="text-gray-500 hover:text-[#ff6b35]">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                <p class="text-sm text-gray-400 mt-2">🔥 320 kcal • 🥛 15g protein</p>
+                            </div>
+                            <div class="p-6 apple-card border border-[#ff6b35]/30">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <p class="text-xs font-black text-orange-300 uppercase mb-1">LUNCH</p>
+                                        <h4 class="font-bold text-white">Grilled chicken salad</h4>
+                                    </div>
+                                    <button onclick="removeMeal(this, 450)" class="text-gray-500 hover:text-[#ff6b35]">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                <p class="text-sm text-gray-400 mt-2">🔥 450 kcal • 🥛 35g protein</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="apple-card p-8 mt-8">
+                        <h3 class="text-xl font-bold mb-6">Daily Macronutrients</h3>
+                        <div class="grid grid-cols-3 gap-4">
+                            <div class="text-center p-6 apple-card border border-[#ff6b35]/20">
+                                <p class="text-xs text-gray-400 font-bold">PROTEIN</p>
+                                <p class="text-3xl font-black text-[#ff6b35]" id="protein-total">120g</p>
+                                <p class="text-xs text-gray-500">150g goal</p>
+                            </div>
+                            <div class="text-center p-6 apple-card border border-[#0071e3]/20">
+                                <p class="text-xs text-gray-400 font-bold">CARBS</p>
+                                <p class="text-3xl font-black text-blue-400" id="carbs-total">210g</p>
+                                <p class="text-xs text-gray-500">300g goal</p>
+                            </div>
+                            <div class="text-center p-6 apple-card border border-[#ffd166]/20">
+                                <p class="text-xs text-gray-400 font-bold">FATS</p>
+                                <p class="text-3xl font-black text-[#ffd166]" id="fats-total">45g</p>
+                                <p class="text-xs text-gray-500">70g goal</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="space-y-8">
+                    <div class="apple-card p-8">
+                        <h3 class="text-xl font-bold mb-6">Water Intake</h3>
+                        <div class="text-center">
+                            <div class="text-5xl font-black text-blue-400 mb-4"><span id="water-count">6</span>/8</div>
+                            <p class="text-gray-400 mb-6">Glasses today</p>
+                            <button onclick="addWater()" class="w-full py-4 btn-primary font-bold">
+                                <i class="fas fa-plus mr-2"></i>Add Glass
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="apple-card p-8">
+                        <h3 class="text-xl font-bold mb-6">Calorie Goal</h3>
+                        <div class="text-center">
+                            <div class="text-5xl font-black text-[#ff6b35] mb-2" id="calories-consumed">1,850</div>
+                            <p class="text-gray-400 mb-4">of 2,200 kcal</p>
+                            <div class="progress-bar">
+                                <div id="calorie-progress-bar" class="progress-fill" style="background: linear-gradient(135deg, #ff6b35 0%, #0071e3 100%); width: 84%;"></div>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-4" id="remaining-calories">Remaining: 350 kcal</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Coaches Section - UPDATED WITH 10 TRAINERS -->
+        <div id="section-trainers" class="content-section hidden">
+            <div class="flex justify-between items-center mb-8">
+                <h1 class="text-4xl font-extrabold">Find Your Coach</h1>
+                <div class="relative">
+                    <input type="text" id="coach-search" placeholder="Search coaches..." class="pl-12 pr-4 py-3 apple-card border border-white/10 w-64 outline-none" onkeyup="searchCoaches()">
+                    <i class="fas fa-search absolute left-4 top-4 text-gray-500"></i>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="coaches-grid">
+                <!-- Coach 1 -->
+                <div class="apple-card p-8 text-center coach-card">
+                    <img src="https://assets.vogue.in/photos/61def37d0f1f99244c4a321a/1:1/w_1080,h_1080,c_limit/5%20fitness%20lessons%20to%20learn%20from%20Samantha%20Ruth%20Prabhu.jpg" class="w-32 h-32 rounded-full border-4 border-white/10 shadow-xl mx-auto mb-6 object-cover">
+                    <h3 class="text-2xl font-black text-white">Samantha</h3>
+                    <p class="text-[#ff6b35] font-bold mb-4">Personal Trainer</p>
+                    <p class="text-gray-300 text-sm mb-6">Specializes in strength training and weight loss. 10+ years experience.</p>
+                    <div class="flex justify-center mb-6 star-rating" data-trainer="samantha">
+                        <i class="fas fa-star text-[#ffd166]" data-rating="1"></i>
+                        <i class="fas fa-star text-[#ffd166]" data-rating="2"></i>
+                        <i class="fas fa-star text-[#ffd166]" data-rating="3"></i>
+                        <i class="fas fa-star text-[#ffd166]" data-rating="4"></i>
+                        <i class="far fa-star" data-rating="5"></i>
+                        <span class="ml-2 font-bold text-gray-300" id="rating-samantha">4.0</span>
+                    </div>
+                    <div class="text-sm text-gray-400 mb-4">
+                        <p><i class="fas fa-phone mr-2"></i> +91 98765 43210</p>
+                        <p><i class="fas fa-envelope mr-2"></i> samantha@wellnest.com</p>
+                    </div>
+                    <button onclick="openTrainerProfile('Samantha', 'Personal Trainer', 'Certified personal trainer with 10+ years experience. Specializes in weight loss, strength training, and athletic performance. Has trained over 500 clients successfully.', 'https://assets.vogue.in/photos/61def37d0f1f99244c4a321a/1:1/w_1080,h_1080,c_limit/5%20fitness%20lessons%20to%20learn%20from%20Samantha%20Ruth%20Prabhu.jpg', '+91 98765 43210', 'samantha@wellnest.com')" class="w-full py-3 btn-primary font-bold">View Profile</button>
+                </div>
+                
+                <!-- Coach 2 -->
+                <div class="apple-card p-8 text-center coach-card">
+                    <img src="https://gymsquad.in/cdn/shop/files/Kiara_Advani_550x.png?v=1744366792" class="w-32 h-32 rounded-full border-4 border-white/10 shadow-xl mx-auto mb-6 object-cover">
+                    <h3 class="text-2xl font-black text-white">kiara</h3>
+                    <p class="text-[#ff6b35] font-bold mb-4">Yoga & Meditation Coach</p>
+                    <p class="text-gray-300 text-sm mb-6">Mindfulness expert with focus on mental wellness and flexibility.</p>
+                    <div class="flex justify-center mb-6 star-rating" data-trainer="kiara">
+                        <i class="fas fa-star text-[#ffd166]" data-rating="1"></i>
+                        <i class="fas fa-star text-[#ffd166]" data-rating="2"></i>
+                        <i class="fas fa-star text-[#ffd166]" data-rating="3"></i>
+                        <i class="fas fa-star text-[#ffd166]" data-rating="4"></i>
+                        <i class="fas fa-star text-[#ffd166]" data-rating="5"></i>
+                        <span class="ml-2 font-bold text-gray-300" id="rating-kiara">5.0</span>
+                    </div>
+                    <div class="text-sm text-gray-400 mb-4">
+                        <p><i class="fas fa-phone mr-2"></i> +91 98765 43211</p>
+                        <p><i class="fas fa-envelope mr-2"></i> kiara@wellnest.com</p>
+                    </div>
+                    <button onclick="openTrainerProfile('kiara', 'Yoga & Meditation Coach', 'RYT 500 certified yoga instructor with 8 years of experience. Specializes in therapeutic yoga, meditation, and stress management. Conducts corporate wellness sessions.', 'https://gymsquad.in/cdn/shop/files/Kiara_Advani_550x.png?v=1744366792', '+91 98765 43211', 'kiara@wellnest.com')" class="w-full py-3 btn-primary font-bold">View Profile</button>
+                </div>
+                
+                <!-- Coach 3 -->
+                <div class="apple-card p-8 text-center coach-card">
+                    <img src="https://images.filmibeat.com/img/2017/02/sushant-singh-rajput-turns-into-a-fitness-freak-01-1485949454.jpg" class="w-32 h-32 rounded-full border-4 border-white/10 shadow-xl mx-auto mb-6 object-cover">
+                    <h3 class="text-2xl font-black text-white">Sushant Singh </h3>
+                    <p class="text-[#ff6b35] font-bold mb-4">Nutritionist</p>
+                    <p class="text-gray-300 text-sm mb-6">Diet planning and nutritional guidance for optimal health.</p>
+                    <div class="flex justify-center mb-6 star-rating" data-trainer="sushantsingh ">
+                        <i class="fas fa-star text-[#ffd166]" data-rating="1"></i>
+                        <i class="fas fa-star text-[#ffd166]" data-rating="2"></i>
+                        <i class="fas fa-star text-[#ffd166]" data-rating="3"></i>
+                        <i class="fas fa-star text-[#ffd166]" data-rating="4"></i>
+                        <i class="far fa-star" data-rating="5"></i>
+                        <span class="ml-2 font-bold text-gray-300" id="rating-sushantsingh ">4.0</span>
+                    </div>
+                    <div class="text-sm text-gray-400 mb-4">
+                        <p><i class="fas fa-phone mr-2"></i> +91 98765 43212</p>
+                        <p><i class="fas fa-envelope mr-2"></i> sushantsingh@wellnest.com</p>
+                    </div>
+                    <button onclick="openTrainerProfile('Sushant Singh ', 'Nutritionist', 'Registered dietitian with 12 years of experience. Specializes in weight management, sports nutrition, and medical nutrition therapy. Has helped 1000+ clients achieve their goals.', 'https://images.filmibeat.com/img/2017/02/sushant-singh-rajput-turns-into-a-fitness-freak-01-1485949454.jpg', '+91 98765 43212', 'sushantsingh@wellnest.com')" class="w-full py-3 btn-primary font-bold">View Profile</button>
+                </div>
+                
+                <!-- Coach 4 -->
+                <div class="apple-card p-8 text-center coach-card">
+                    <img src="https://www.bollywoodhungama.com/wp-content/uploads/2019/04/Here-are-a-few-pictures-of-Hrithik-Roshan-in-the-gym-to-get-you-through-Thursday.jpg" class="w-32 h-32 rounded-full border-4 border-white/10 shadow-xl mx-auto mb-6 object-cover">
+                    <h3 class="text-2xl font-black text-white">Hirthik Roshan</h3>
+                    <p class="text-[#ff6b35] font-bold mb-4">CrossFit Coach</p>
+                    <p class="text-gray-300 text-sm mb-6">CrossFit Level 2 trainer with focus on functional fitness.</p>
+                    <div class="flex justify-center mb-6 star-rating" data-trainer="Hirthik">
+                        <i class="fas fa-star text-[#ffd166]" data-rating="1"></i>
+                        <i class="fas fa-star text-[#ffd166]" data-rating="2"></i>
+                        <i class="fas fa-star text-[#ffd166]" data-rating="3"></i>
+                        <i class="fas fa-star text-[#ffd166]" data-rating="4"></i>
+                        <i class="fas fa-star text-[#ffd166]" data-rating="5"></i>
+                        <span class="ml-2 font-bold text-gray-300" id="rating-Hirthik">4.5</span>
+                    </div>
+                    <div class="text-sm text-gray-400 mb-4">
+                        <p><i class="fas fa-phone mr-2"></i> +91 98765 43213</p>
+                        <p><i class="fas fa-envelope mr-2"></i> Hirthik@wellnest.com</p>
+                    </div>
+                    <button onclick="openTrainerProfile('Hirthik Roshan', 'CrossFit Coach', 'CrossFit Level 2 trainer with 7 years of experience. Specializes in functional fitness, mobility training, and competition preparation. Former national level athlete.', 'https://www.bollywoodhungama.com/wp-content/uploads/2019/04/Here-are-a-few-pictures-of-Hrithik-Roshan-in-the-gym-to-get-you-through-Thursday.jpg', '+91 98765 43213', 'hirthik@wellnest.com')" class="w-full py-3 btn-primary font-bold">View Profile</button>
+                </div>
+                
+                <!-- Coach 5 -->
+                <div class="apple-card p-8 text-center coach-card">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSuypVv9v1vWIObuO4cTrMO2er3R6-_b0EqCw&s" class="w-32 h-32 rounded-full border-4 border-white/10 shadow-xl mx-auto mb-6 object-cover">
+                    <h3 class="text-2xl font-black text-white">Suriya</h3>
+                    <p class="text-[#ff6b35] font-bold mb-4">Pilates Instructor</p>
+                    <p class="text-gray-300 text-sm mb-6">Certified Pilates instructor focusing on core strength and posture.</p>
+                    <div class="flex justify-center mb-6 star-rating" data-trainer="suriya">
+                        <i class="fas fa-star text-[#ffd166]" data-rating="1"></i>
+                        <i class="fas fa-star text-[#ffd166]" data-rating="2"></i>
+                        <i class="fas fa-star text-[#ffd166]" data-rating="3"></i>
+                        <i class="fas fa-star text-[#ffd166]" data-rating="4"></i>
+                        <i class="far fa-star" data-rating="5"></i>
+                        <span class="ml-2 font-bold text-gray-300" id="rating-suriya">4.0</span>
+                    </div>
+                    <div class="text-sm text-gray-400 mb-4">
+                        <p><i class="fas fa-phone mr-2"></i> +91 98765 43214</p>
+                        <p><i class="fas fa-envelope mr-2"></i> suriya@wellnest.com</p>
+                    </div>
+                    <button onclick="openTrainerProfile('Suriya', 'Pilates Instructor', 'Certified Pilates instructor with 6 years of experience. Specializes in rehabilitation, posture correction, and pre/post-natal fitness. Works with clients of all ages.', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSuypVv9v1vWIObuO4cTrMO2er3R6-_b0EqCw&s', '+91 98765 43214', 'suriya@wellnest.com')" class="w-full py-3 btn-primary font-bold">View Profile</button>
+                </div>
+                
+                <!-- Coach 6 -->
+                <div class="apple-card p-8 text-center coach-card">
+                    <img src="https://celebsandcinema.com/wp-content/uploads/2016/02/Vidyut-Jamwal.jpg" class="w-32 h-32 rounded-full border-4 border-white/10 shadow-xl mx-auto mb-6 object-cover">
+                    <h3 class="text-2xl font-black text-white">Vidyut Jamwal </h3>
+                    <p class="text-[#ff6b35] font-bold mb-4">Martial Arts Trainer</p>
+                    <p class="text-gray-300 text-sm mb-6">Black belt in Karate and Muay Thai, focuses on self-defense.</p>
+                    <div class="flex justify-center mb-6 star-rating" data-trainer="Vidyut Jamwal ">
+                        <i class="fas fa-star text-[#ffd166]" data-rating="1"></i>
+                        <i class="fas fa-star text-[#ffd166]" data-rating="2"></i>
+                        <i class="fas fa-star text-[#ffd166]" data-rating="3"></i>
+                        <i class="fas fa-star text-[#ffd166]" data-rating="4"></i>
+                        <i class="fas fa-star text-[#ffd166]" data-rating="5"></i>
+                        <span class="ml-2 font-bold text-gray-300" id="rating-Vidyut Jamwal ">4.8</span>
+                    </div>
+                    <div class="text-sm text-gray-400 mb-4">
+                        <p><i class="fas fa-phone mr-2"></i> +91 98765 43215</p>
+                        <p><i class="fas fa-envelope mr-2"></i> vidyutjamwal@wellnest.com</p>
+                    </div>
+                    <button onclick="openTrainerProfile('Vidyut Jamwal ', 'Martial Arts Trainer', '4th Dan Black Belt in Karate with 15 years of teaching experience. Also certified in Muay Thai and Krav Maga. Specializes in self-defense, fitness kickboxing, and martial arts for kids.', 'https://celebsandcinema.com/wp-content/uploads/2016/02/Vidyut-Jamwal.jpg', '+91 98765 43215', 'vidyutjamwal@wellnest.com')" class="w-full py-3 btn-primary font-bold">View Profile</button>
+                </div>
+                
+                <!-- Coach 7 -->
+                <div class="apple-card p-8 text-center coach-card">
+                    <img src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" class="w-32 h-32 rounded-full border-4 border-white/10 shadow-xl mx-auto mb-6 object-cover">
+                    <h3 class="text-2xl font-black text-white">Neha Gupta</h3>
+                    <p class="text-[#ff6b35] font-bold mb-4">Swimming Coach</p>
+                    <p class="text-gray-300 text-sm mb-6">Professional swimming coach for all age groups and skill levels.</p>
+                    <div class="flex justify-center mb-6 star-rating" data-trainer="neha">
+                        <i class="fas fa-star text-[#ffd166]" data-rating="1"></i>
+                        <i class="fas fa-star text-[#ffd166]" data-rating="2"></i>
+                        <i class="fas fa-star text-[#ffd166]" data-rating="3"></i>
+                        <i class="fas fa-star text-[#ffd166]" data-rating="4"></i>
+                        <i class="far fa-star" data-rating="5"></i>
+                        <span class="ml-2 font-bold text-gray-300" id="rating-neha">4.2</span>
+                    </div>
+                    <div class="text-sm text-gray-400 mb-4">
+                        <p><i class="fas fa-phone mr-2"></i> +91 98765 43216</p>
+                        <p><i class="fas fa-envelope mr-2"></i> neha@wellnest.com</p>
+                    </div>
+                    <button onclick="openTrainerProfile('Neha Gupta', 'Swimming Coach', 'Professional swimming coach with 10 years of experience. Certified by FINA. Specializes in competitive swimming, rehabilitation through aqua therapy, and teaching beginners. Former national level swimmer.', 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80', '+91 98765 43216', 'neha@wellnest.com')" class="w-full py-3 btn-primary font-bold">View Profile</button>
+                </div>
+                
+                <!-- Coach 8 -->
+                <div class="apple-card p-8 text-center coach-card">
+                    <img src="https://assets.vogue.in/photos/5ecfaaec02e117a6ff0575f7/2:3/w_2560%2Cc_limit/disha.jpg" class="w-32 h-32 rounded-full border-4 border-white/10 shadow-xl mx-auto mb-6 object-cover">
+                    <h3 class="text-2xl font-black text-white">Disha</h3>
+                    <p class="text-[#ff6b35] font-bold mb-4">Sports Physiotherapist</p>
+                    <p class="text-gray-300 text-sm mb-6">Rehabilitation and injury prevention specialist.</p>
+                    <div class="flex justify-center mb-6 star-rating" data-trainer="Disha">
+                        <i class="fas fa-star text-[#ffd166]" data-rating="1"></i>
+                        <i class="fas fa-star text-[#ffd166]" data-rating="2"></i>
+                        <i class="fas fa-star text-[#ffd166]" data-rating="3"></i>
+                        <i class="fas fa-star text-[#ffd166]" data-rating="4"></i>
+                        <i class="fas fa-star text-[#ffd166]" data-rating="5"></i>
+                        <span class="ml-2 font-bold text-gray-300" id="rating-Disha">4.9</span>
+                    </div>
+                    <div class="text-sm text-gray-400 mb-4">
+                        <p><i class="fas fa-phone mr-2"></i> +91 98765 43217</p>
+                        <p><i class="fas fa-envelope mr-2"></i> disha@wellnest.com</p>
+                    </div>
+                    <button onclick="openTrainerProfile('Disha', 'Sports Physiotherapist', 'Sports physiotherapist with 12 years of experience. Specializes in injury rehabilitation, sports massage, and injury prevention. Has worked with professional athletes and teams.', 'https://assets.vogue.in/photos/5ecfaaec02e117a6ff0575f7/2:3/w_2560%2Cc_limit/disha.jpg', '+91 98765 43217', 'disha@wellnest.com')" class="w-full py-3 btn-primary font-bold">View Profile</button>
+                </div>
+                
+                <!-- Coach 9 -->
+                <div class="apple-card p-8 text-center coach-card">
+                    <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" class="w-32 h-32 rounded-full border-4 border-white/10 shadow-xl mx-auto mb-6 object-cover">
+                    <h3 class="text-2xl font-black text-white">Aditi Rao</h3>
+                    <p class="text-[#ff6b35] font-bold mb-4">Zumba Instructor</p>
+                    <p class="text-gray-300 text-sm mb-6">High-energy dance fitness classes for all fitness levels.</p>
+                    <div class="flex justify-center mb-6 star-rating" data-trainer="aditi">
+                        <i class="fas fa-star text-[#ffd166]" data-rating="1"></i>
+                        <i class="fas fa-star text-[#ffd166]" data-rating="2"></i>
+                        <i class="fas fa-star text-[#ffd166]" data-rating="3"></i>
+                        <i class="fas fa-star text-[#ffd166]" data-rating="4"></i>
+                        <i class="fas fa-star text-[#ffd166]" data-rating="5"></i>
+                        <span class="ml-2 font-bold text-gray-300" id="rating-aditi">4.7</span>
+                    </div>
+                    <div class="text-sm text-gray-400 mb-4">
+                        <p><i class="fas fa-phone mr-2"></i> +91 98765 43218</p>
+                        <p><i class="fas fa-envelope mr-2"></i> aditi@wellnest.com</p>
+                    </div>
+                    <button onclick="openTrainerProfile('Aditi Rao', 'Zumba Instructor', 'Certified Zumba instructor with 8 years of experience. Specializes in dance fitness, Latin rhythms, and weight loss through dance. Conducts group classes and private sessions.', 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80', '+91 98765 43218', 'aditi@wellnest.com')" class="w-full py-3 btn-primary font-bold">View Profile</button>
+                </div>
+                
+                <!-- Coach 10 -->
+                <div class="apple-card p-8 text-center coach-card">
+                    <img src="https://images.unsplash.com/photo-1550345332-09e3ac987658?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" class="w-32 h-32 rounded-full border-4 border-white/10 shadow-xl mx-auto mb-6 object-cover">
+                    <h3 class="text-2xl font-black text-white">Rohan Desai</h3>
+                    <p class="text-[#ff6b35] font-bold mb-4">Senior Fitness Coach</p>
+                    <p class="text-gray-300 text-sm mb-6">Specializes in fitness for seniors and rehabilitation.</p>
+                    <div class="flex justify-center mb-6 star-rating" data-trainer="rohan">
+                        <i class="fas fa-star text-[#ffd166]" data-rating="1"></i>
+                        <i class="fas fa-star text-[#ffd166]" data-rating="2"></i>
+                        <i class="fas fa-star text-[#ffd166]" data-rating="3"></i>
+                        <i class="fas fa-star text-[#ffd166]" data-rating="4"></i>
+                        <i class="fas fa-star text-[#ffd166]" data-rating="5"></i>
+                        <span class="ml-2 font-bold text-gray-300" id="rating-rohan">4.8</span>
+                    </div>
+                    <div class="text-sm text-gray-400 mb-4">
+                        <p><i class="fas fa-phone mr-2"></i> +91 98765 43219</p>
+                        <p><i class="fas fa-envelope mr-2"></i> rohan@wellnest.com</p>
+                    </div>
+                    <button onclick="openTrainerProfile('Rohan Desai', 'Senior Fitness Coach', 'Specialized in senior fitness with 10 years of experience. Focuses on mobility, balance, strength training for older adults, and rehabilitation post-surgery. Certified in geriatric fitness.', 'https://images.unsplash.com/photo-1550345332-09e3ac987658?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80', '+91 98765 43219', 'rohan@wellnest.com')" class="w-full py-3 btn-primary font-bold">View Profile</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Community Section - ENHANCED WITH MORE COMMENTS AND FUNCTIONALITY -->
+        <div id="section-blog" class="content-section hidden">
+            <div class="flex justify-between items-center mb-8">
+                <h1 class="text-4xl font-extrabold">Community Blog</h1>
+                <button onclick="togglePostModal()" class="btn-primary px-8 py-3 font-bold">+ Create Post</button>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Left Column - Blog Feed -->
+                <div class="lg:col-span-2">
+                    <div id="blog-feed" class="space-y-8">
+                        <!-- Sample Post 1 -->
+                        <div class="apple-card p-8">
+                            <div class="flex items-center justify-between mb-6">
+                                <div class="flex items-center space-x-4">
+                                    <img src="https://i.pravatar.cc/100?u=Aarav" class="w-12 h-12 rounded-full border-2 border-[#ff6b35] p-0.5">
+                                    <div>
+                                        <h4 class="font-bold">Aarav Sharma</h4>
+                                        <p class="text-xs text-gray-400">2 hours ago • 🏋️ Fitness Journey</p>
+                                    </div>
+                                </div>
+                                <button class="text-gray-500 hover:text-[#ff6b35]">
+                                    <i class="fas fa-ellipsis-h"></i>
+                                </button>
+                            </div>
+                            
+                            <h3 class="text-2xl font-bold mb-4">Completed 100 Days of Consistency! 🎉</h3>
+                            <p class="text-gray-300 leading-relaxed mb-6">Just hit my 100-day streak of daily workouts! Started at 85kg, now at 72kg. The journey wasn't easy but consistency is key. My routine: Morning yoga, evening weight training, and 10K steps daily.</p>
+                            
+                            <!-- Post Stats -->
+                            <div class="flex items-center space-x-6 text-gray-400 text-sm mb-6">
+                                <div class="flex items-center space-x-2">
+                                    <button onclick="likePost(this)" class="like-btn flex items-center space-x-1 hover:text-red-500">
+                                        <i class="far fa-heart"></i>
+                                        <span>248</span>
+                                    </button>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <button onclick="toggleComments(this)" class="flex items-center space-x-1 hover:text-[#ff6b35]">
+                                        <i class="far fa-comment"></i>
+                                        <span>42</span>
+                                    </button>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-share"></i>
+                                    <span>18</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Comments Section (Hidden by default) -->
+                            <div class="comments-section hidden mt-6 border-t border-white/10 pt-6">
+                                <div class="flex items-center space-x-4 mb-4">
+                                    <img src="https://ui-avatars.com/api/?name=You&background=ff6b35&color=fff&bold=true" class="w-10 h-10 rounded-full">
+                                    <div class="flex-1">
+                                        <input type="text" class="w-full p-3 apple-card outline-none comment-input" placeholder="Write a comment..." onkeypress="if(event.key === 'Enter') addComment(this)">
+                                    </div>
+                                </div>
+                                
+                                <div class="comments-container space-y-4">
+                                    <div class="comment-box p-4 apple-card">
+                                        <div class="flex items-center space-x-2 mb-2">
+                                            <img src="https://i.pravatar.cc/100?img=1" class="w-8 h-8 rounded-full">
+                                            <span class="font-bold text-sm">Alex Chen</span>
+                                            <span class="text-xs text-gray-500">2 hours ago</span>
+                                            <span class="ml-auto text-xs text-[#ff6b35] font-bold">🏆 Top Contributor</span>
+                                        </div>
+                                        <p class="text-gray-300">Incredible transformation! Your consistency is inspiring. What was your biggest challenge during these 100 days?</p>
+                                    </div>
+                                    <div class="comment-box p-4 apple-card">
+                                        <div class="flex items-center space-x-2 mb-2">
+                                            <img src="https://i.pravatar.cc/100?img=2" class="w-8 h-8 rounded-full">
+                                            <span class="font-bold text-sm">Priya Patel</span>
+                                            <span class="text-xs text-gray-500">1 hour ago</span>
+                                        </div>
+                                        <p class="text-gray-300">Amazing work! Could you share your diet plan? I'm struggling with meal planning.</p>
+                                    </div>
+                                    <div class="comment-box p-4 apple-card">
+                                        <div class="flex items-center space-x-2 mb-2">
+                                            <img src="https://i.pravatar.cc/100?img=3" class="w-8 h-8 rounded-full">
+                                            <span class="font-bold text-sm">Rohan Verma</span>
+                                            <span class="text-xs text-gray-500">45 mins ago</span>
+                                        </div>
+                                        <p class="text-gray-300">This motivates me to start my journey! Did you follow any specific program or create your own?</p>
+                                    </div>
+                                    <div class="comment-box p-4 apple-card">
+                                        <div class="flex items-center space-x-2 mb-2">
+                                            <img src="https://i.pravatar.cc/100?img=4" class="w-8 h-8 rounded-full">
+                                            <span class="font-bold text-sm">Sneha Kapoor</span>
+                                            <span class="text-xs text-gray-500">30 mins ago</span>
+                                        </div>
+                                        <p class="text-gray-300">Great job! How did you stay motivated on days when you didn't feel like working out?</p>
+                                    </div>
+                                    <div class="comment-box p-4 apple-card">
+                                        <div class="flex items-center space-x-2 mb-2">
+                                            <img src="https://i.pravatar.cc/100?img=5" class="w-8 h-8 rounded-full">
+                                            <span class="font-bold text-sm">Vikram Singh</span>
+                                            <span class="text-xs text-gray-500">15 mins ago</span>
+                                        </div>
+                                        <p class="text-gray-300">13kg in 100 days is impressive! Did you track your macros or just focused on calorie deficit?</p>
+                                    </div>
+                                    <div class="comment-box p-4 apple-card">
+                                        <div class="flex items-center space-x-2 mb-2">
+                                            <img src="https://i.pravatar.cc/100?img=6" class="w-8 h-8 rounded-full">
+                                            <span class="font-bold text-sm">Meera Joshi</span>
+                                            <span class="text-xs text-gray-500">10 mins ago</span>
+                                        </div>
+                                        <p class="text-gray-300">Your morning yoga routine sounds great! Could you recommend some beginner-friendly poses?</p>
+                                    </div>
+                                    <div class="comment-box p-4 apple-card">
+                                        <div class="flex items-center space-x-2 mb-2">
+                                            <img src="https://i.pravatar.cc/100?img=7" class="w-8 h-8 rounded-full">
+                                            <span class="font-bold text-sm">Karan Malhotra</span>
+                                            <span class="text-xs text-gray-500">5 mins ago</span>
+                                        </div>
+                                        <p class="text-gray-300">This is the motivation I needed! Starting my 100-day challenge tomorrow 💪</p>
+                                    </div>
+                                    <div class="comment-box p-4 apple-card">
+                                        <div class="flex items-center space-x-2 mb-2">
+                                            <img src="https://i.pravatar.cc/100?img=8" class="w-8 h-8 rounded-full">
+                                            <span class="font-bold text-sm">Ananya Reddy</span>
+                                            <span class="text-xs text-gray-500">Just now</span>
+                                        </div>
+                                        <p class="text-gray-300">Congratulations! The consistency is what's most impressive. Keep inspiring us! ✨</p>
+                                    </div>
+                                    <div class="comment-box p-4 apple-card">
+                                        <div class="flex items-center space-x-2 mb-2">
+                                            <img src="https://i.pravatar.cc/100?img=9" class="w-8 h-8 rounded-full">
+                                            <span class="font-bold text-sm">Rahul Kumar</span>
+                                            <span class="text-xs text-gray-500">Just now</span>
+                                        </div>
+                                        <p class="text-gray-300">This is truly inspiring! I'm on day 45 of my journey and your post gives me hope to continue!</p>
+                                    </div>
+                                    <div class="comment-box p-4 apple-card">
+                                        <div class="flex items-center space-x-2 mb-2">
+                                            <img src="https://i.pravatar.cc/100?img=10" class="w-8 h-8 rounded-full">
+                                            <span class="font-bold text-sm">Sonia Mehta</span>
+                                            <span class="text-xs text-gray-500">Just now</span>
+                                        </div>
+                                        <p class="text-gray-300">Amazing discipline! Did you have cheat days? How did you handle social events?</p>
+                                    </div>
+                                    <div class="comment-box p-4 apple-card">
+                                        <div class="flex items-center space-x-2 mb-2">
+                                            <img src="https://i.pravatar.cc/100?img=11" class="w-8 h-8 rounded-full">
+                                            <span class="font-bold text-sm">Arjun Nair</span>
+                                            <span class="text-xs text-gray-500">Just now</span>
+                                        </div>
+                                        <p class="text-gray-300">The 10K steps daily is impressive! Did you use any fitness tracker or just counted manually?</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Sample Post 2 -->
+                        <div class="apple-card p-8">
+                            <div class="flex items-center justify-between mb-6">
+                                <div class="flex items-center space-x-4">
+                                    <img src="https://i.pravatar.cc/100?u=Sarah" class="w-12 h-12 rounded-full border-2 border-[#0071e3] p-0.5">
+                                    <div>
+                                        <h4 class="font-bold">Sarah Johnson</h4>
+                                        <p class="text-xs text-gray-400">5 hours ago • 🧘‍♀️ Wellness</p>
+                                    </div>
+                                </div>
+                                <button class="text-gray-500 hover:text-[#ff6b35]">
+                                    <i class="fas fa-ellipsis-h"></i>
+                                </button>
+                            </div>
+                            
+                            <h3 class="text-2xl font-bold mb-4">Mindful Morning Routine Changed My Life 🌅</h3>
+                            <p class="text-gray-300 leading-relaxed mb-6">After struggling with anxiety for years, I implemented a 30-minute mindful morning routine: 10 min meditation, 10 min stretching, 10 min journaling. The results have been life-changing - better focus, less stress, more energy throughout the day. I've also noticed improved relationships and overall happiness!</p>
+                            
+                            <!-- Post Stats -->
+                            <div class="flex items-center space-x-6 text-gray-400 text-sm mb-6">
+                                <div class="flex items-center space-x-2">
+                                    <button onclick="likePost(this)" class="like-btn flex items-center space-x-1 hover:text-red-500">
+                                        <i class="far fa-heart"></i>
+                                        <span>156</span>
+                                    </button>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <button onclick="toggleComments(this)" class="flex items-center space-x-1 hover:text-[#ff6b35]">
+                                        <i class="far fa-comment"></i>
+                                        <span>28</span>
+                                    </button>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-share"></i>
+                                    <span>9</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Comments Section -->
+                            <div class="comments-section hidden mt-6 border-t border-white/10 pt-6">
+                                <div class="flex items-center space-x-4 mb-4">
+                                    <img src="https://ui-avatars.com/api/?name=You&background=ff6b35&color=fff&bold=true" class="w-10 h-10 rounded-full">
+                                    <div class="flex-1">
+                                        <input type="text" class="w-full p-3 apple-card outline-none comment-input" placeholder="Write a comment..." onkeypress="if(event.key === 'Enter') addComment(this)">
+                                    </div>
+                                </div>
+                                
+                                <div class="comments-container space-y-4">
+                                    <div class="comment-box p-4 apple-card">
+                                        <div class="flex items-center space-x-2 mb-2">
+                                            <img src="https://i.pravatar.cc/100?img=12" class="w-8 h-8 rounded-full">
+                                            <span class="font-bold text-sm">David Miller</span>
+                                            <span class="text-xs text-gray-500">3 hours ago</span>
+                                        </div>
+                                        <p class="text-gray-300">This is exactly what I needed to read today. Been struggling with morning anxiety too. What meditation app do you recommend?</p>
+                                    </div>
+                                    <div class="comment-box p-4 apple-card">
+                                        <div class="flex items-center space-x-2 mb-2">
+                                            <img src="https://i.pravatar.cc/100?img=13" class="w-8 h-8 rounded-full">
+                                            <span class="font-bold text-sm">Lisa Wang</span>
+                                            <span class="text-xs text-gray-500">2 hours ago</span>
+                                        </div>
+                                        <p class="text-gray-300">What meditation app do you recommend for beginners? Also, do you have any journaling prompts?</p>
+                                    </div>
+                                    <div class="comment-box p-4 apple-card">
+                                        <div class="flex items-center space-x-2 mb-2">
+                                            <img src="https://i.pravatar.cc/100?img=14" class="w-8 h-8 rounded-full">
+                                            <span class="font-bold text-sm">Michael Brown</span>
+                                            <span class="text-xs text-gray-500">1 hour ago</span>
+                                        </div>
+                                        <p class="text-gray-300">I tried this routine for a week and already feel better! The stretching part was game-changing for my back pain.</p>
+                                    </div>
+                                    <div class="comment-box p-4 apple-card">
+                                        <div class="flex items-center space-x-2 mb-2">
+                                            <img src="https://i.pravatar.cc/100?img=15" class="w-8 h-8 rounded-full">
+                                            <span class="font-bold text-sm">Sophia Davis</span>
+                                            <span class="text-xs text-gray-500">45 mins ago</span>
+                                        </div>
+                                        <p class="text-gray-300">Journaling has been therapeutic for me too! Could you share what type of things you write about in the morning?</p>
+                                    </div>
+                                    <div class="comment-box p-4 apple-card">
+                                        <div class="flex items-center space-x-2 mb-2">
+                                            <img src="https://i.pravatar.cc/100?img=16" class="w-8 h-8 rounded-full">
+                                            <span class="font-bold text-sm">James Wilson</span>
+                                            <span class="text-xs text-gray-500">30 mins ago</span>
+                                        </div>
+                                        <p class="text-gray-300">As a busy professional, finding 30 minutes in the morning seemed impossible until I tried your method. Now I can't start my day without it!</p>
+                                    </div>
+                                    <div class="comment-box p-4 apple-card">
+                                        <div class="flex items-center space-x-2 mb-2">
+                                            <img src="https://i.pravatar.cc/100?img=17" class="w-8 h-8 rounded-full">
+                                            <span class="font-bold text-sm">Emma Thompson</span>
+                                            <span class="text-xs text-gray-500">20 mins ago</span>
+                                        </div>
+                                        <p class="text-gray-300">Do you do this routine even on weekends? I find it hard to maintain consistency on days off.</p>
+                                    </div>
+                                    <div class="comment-box p-4 apple-card">
+                                        <div class="flex items-center space-x-2 mb-2">
+                                            <img src="https://i.pravatar.cc/100?img=18" class="w-8 h-8 rounded-full">
+                                            <span class="font-bold text-sm">Robert Garcia</span>
+                                            <span class="text-xs text-gray-500">15 mins ago</span>
+                                        </div>
+                                        <p class="text-gray-300">The 10-10-10 breakdown is perfect! It's manageable and doesn't feel overwhelming. Thanks for sharing!</p>
+                                    </div>
+                                    <div class="comment-box p-4 apple-card">
+                                        <div class="flex items-center space-x-2 mb-2">
+                                            <img src="https://i.pravatar.cc/100?img=19" class="w-8 h-8 rounded-full">
+                                            <span class="font-bold text-sm">Olivia Martinez</span>
+                                            <span class="text-xs text-gray-500">10 mins ago</span>
+                                        </div>
+                                        <p class="text-gray-300">I struggle with meditation - my mind wanders constantly. Any tips for a beginner?</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sample Post 3 -->
+                        <div class="apple-card p-8">
+                            <div class="flex items-center justify-between mb-6">
+                                <div class="flex items-center space-x-4">
+                                    <img src="https://i.pravatar.cc/100?u=Mike" class="w-12 h-12 rounded-full border-2 border-[#ffd166] p-0.5">
+                                    <div>
+                                        <h4 class="font-bold">Mike Chen</h4>
+                                        <p class="text-xs text-gray-400">8 hours ago • 🥗 Nutrition Tips</p>
+                                    </div>
+                                </div>
+                                <button class="text-gray-500 hover:text-[#ff6b35]">
+                                    <i class="fas fa-ellipsis-h"></i>
+                                </button>
+                            </div>
+                            
+                            <h3 class="text-2xl font-bold mb-4">30-Day Plant-Based Challenge Results 🌱</h3>
+                            <p class="text-gray-300 leading-relaxed mb-6">Just completed a 30-day plant-based challenge! Results: Lost 4kg, energy levels through the roof, digestion improved dramatically. The key was meal prepping and finding good protein sources like lentils, chickpeas, and tofu. Sharing my favorite recipes below!</p>
+                            
+                            <!-- Post Stats -->
+                            <div class="flex items-center space-x-6 text-gray-400 text-sm mb-6">
+                                <div class="flex items-center space-x-2">
+                                    <button onclick="likePost(this)" class="like-btn flex items-center space-x-1 hover:text-red-500">
+                                        <i class="far fa-heart"></i>
+                                        <span>89</span>
+                                    </button>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <button onclick="toggleComments(this)" class="flex items-center space-x-1 hover:text-[#ff6b35]">
+                                        <i class="far fa-comment"></i>
+                                        <span>15</span>
+                                    </button>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-share"></i>
+                                    <span>6</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Comments Section -->
+                            <div class="comments-section hidden mt-6 border-t border-white/10 pt-6">
+                                <div class="flex items-center space-x-4 mb-4">
+                                    <img src="https://ui-avatars.com/api/?name=You&background=ff6b35&color=fff&bold=true" class="w-10 h-10 rounded-full">
+                                    <div class="flex-1">
+                                        <input type="text" class="w-full p-3 apple-card outline-none comment-input" placeholder="Write a comment..." onkeypress="if(event.key === 'Enter') addComment(this)">
+                                    </div>
+                                </div>
+                                
+                                <div class="comments-container space-y-4">
+                                    <div class="comment-box p-4 apple-card">
+                                        <div class="flex items-center space-x-2 mb-2">
+                                            <img src="https://i.pravatar.cc/100?img=20" class="w-8 h-8 rounded-full">
+                                            <span class="font-bold text-sm">Jennifer Lee</span>
+                                            <span class="text-xs text-gray-500">4 hours ago</span>
+                                        </div>
+                                        <p class="text-gray-300">Amazing results! Could you share your meal prep routine? I struggle with plant-based meal planning.</p>
+                                    </div>
+                                    <div class="comment-box p-4 apple-card">
+                                        <div class="flex items-center space-x-2 mb-2">
+                                            <img src="https://i.pravatar.cc/100?img=21" class="w-8 h-8 rounded-full">
+                                            <span class="font-bold text-sm">Tom Harris</span>
+                                            <span class="text-xs text-gray-500">3 hours ago</span>
+                                        </div>
+                                        <p class="text-gray-300">Did you experience any protein deficiency concerns? That's my biggest worry about going plant-based.</p>
+                                    </div>
+                                    <div class="comment-box p-4 apple-card">
+                                        <div class="flex items-center space-x-2 mb-2">
+                                            <img src="https://i.pravatar.cc/100?img=22" class="w-8 h-8 rounded-full">
+                                            <span class="font-bold text-sm">Nina Patel</span>
+                                            <span class="text-xs text-gray-500">2 hours ago</span>
+                                        </div>
+                                        <p class="text-gray-300">As a long-term vegetarian, welcome to the club! Your energy boost is probably from all the nutrients in plants 🌿</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Right Column - Trending & Suggestions -->
+                <div class="space-y-8">
+                    <!-- Trending Topics -->
+                    <div class="apple-card p-6">
+                        <h3 class="font-bold text-xl mb-4">🔥 Trending Topics</h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between p-3 hover:bg-white/5 rounded-xl cursor-pointer">
+                                <div>
+                                    <p class="font-bold text-white">#WeightLossJourney</p>
+                                    <p class="text-xs text-gray-500">1.2K posts</p>
+                                </div>
+                                <i class="fas fa-chevron-right text-gray-500"></i>
+                            </div>
+                            <div class="flex items-center justify-between p-3 hover:bg-white/5 rounded-xl cursor-pointer">
+                                <div>
+                                    <p class="font-bold text-white">#YogaEveryday</p>
+                                    <p class="text-xs text-gray-500">856 posts</p>
+                                </div>
+                                <i class="fas fa-chevron-right text-gray-500"></i>
+                            </div>
+                            <div class="flex items-center justify-between p-3 hover:bg-white/5 rounded-xl cursor-pointer">
+                                <div>
+                                    <p class="font-bold text-white">#HealthyRecipes</p>
+                                    <p class="text-xs text-gray-500">2.3K posts</p>
+                                </div>
+                                <i class="fas fa-chevron-right text-gray-500"></i>
+                            </div>
+                            <div class="flex items-center justify-between p-3 hover:bg-white/5 rounded-xl cursor-pointer">
+                                <div>
+                                    <p class="font-bold text-white">#MentalHealthMatters</p>
+                                    <p class="text-xs text-gray-500">745 posts</p>
+                                </div>
+                                <i class="fas fa-chevron-right text-gray-500"></i>
+                            </div>
+                            <div class="flex items-center justify-between p-3 hover:bg-white/5 rounded-xl cursor-pointer">
+                                <div>
+                                    <p class="font-bold text-white">#FitnessTransformation</p>
+                                    <p class="text-xs text-gray-500">1.8K posts</p>
+                                </div>
+                                <i class="fas fa-chevron-right text-gray-500"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Community Stats -->
+                    <div class="apple-card p-6">
+                        <h3 class="font-bold text-xl mb-4">📊 Community Stats</h3>
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-400">Total Members</span>
+                                <span class="font-bold text-white">12,847</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-400">Posts Today</span>
+                                <span class="font-bold text-white">347</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-400">Active Now</span>
+                                <span class="font-bold text-white">1,234</span>
+                            </div>
+                            <div class="pt-4 border-t border-white/10">
+                                <button id="join-challenge-btn" onclick="joinCommunityChallenge()" class="w-full py-3 btn-primary font-bold">
+                                    <i class="fas fa-users mr-2"></i>Join Community Challenge
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Top Contributors -->
+                    <div class="apple-card p-6">
+                        <h3 class="font-bold text-xl mb-4">🏆 Top Contributors</h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center space-x-3 p-3 hover:bg-white/5 rounded-xl">
+                                <img src="https://i.pravatar.cc/100?img=1" class="w-10 h-10 rounded-full border-2 border-[#ffd166]">
+                                <div class="flex-1">
+                                    <p class="font-bold text-white">Alex Chen</p>
+                                    <p class="text-xs text-gray-400">342 helpful posts</p>
+                                </div>
+                                <span class="text-[#ffd166] font-bold">#1</span>
+                            </div>
+                            <div class="flex items-center space-x-3 p-3 hover:bg-white/5 rounded-xl">
+                                <img src="https://i.pravatar.cc/100?img=2" class="w-10 h-10 rounded-full border-2 border-[#c0c0c0]">
+                                <div class="flex-1">
+                                    <p class="font-bold text-white">Priya Patel</p>
+                                    <p class="text-xs text-gray-400">289 helpful posts</p>
+                                </div>
+                                <span class="text-gray-300 font-bold">#2</span>
+                            </div>
+                            <div class="flex items-center space-x-3 p-3 hover:bg-white/5 rounded-xl">
+                                <img src="https://i.pravatar.cc/100?img=3" class="w-10 h-10 rounded-full border-2 border-[#cd7f32]">
+                                <div class="flex-1">
+                                    <p class="font-bold text-white">Rohan Verma</p>
+                                    <p class="text-xs text-gray-400">231 helpful posts</p>
+                                </div>
+                                <span class="text-orange-300 font-bold">#3</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile/Settings Section -->
+        <div id="section-profile" class="content-section hidden">
+            <div class="max-w-4xl mx-auto">
+                <div class="apple-card p-12 text-center mb-8">
+                    <div class="relative inline-block mb-6">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTU8EunuaIOtj23vrtUrWCn_Ivnz5Tr2jvxtQ&s" class="w-32 h-32 rounded-full border-4 border-white/10 shadow-xl mx-auto">
+                    </div>
+                    <h2 class="text-3xl font-black">Gireesh</h2>
+                    <p class="text-gray-400 font-medium">Premium Member since 2024</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="apple-card p-8">
+                        <h3 class="font-bold text-xl mb-6">Physical Stats</h3>
+                        <div class="space-y-6">
+                            <div class="flex justify-between items-center">
+                                <label class="font-bold text-gray-400 text-sm">AGE</label>
+                                <input type="number" value="24" class="w-24 p-2 apple-card text-right font-black outline-none border-0">
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <label class="font-bold text-gray-400 text-sm">HEIGHT (CM)</label>
+                                <input id="p-height" type="number" value="170" class="w-24 p-2 apple-card text-right font-black outline-none border-0">
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <label class="font-bold text-gray-400 text-sm">WEIGHT (KG)</label>
+                                <input id="p-weight" type="number" value="65" class="w-24 p-2 apple-card text-right font-black outline-none border-0">
+                            </div>
+                            <button onclick="saveProfile()" class="w-full py-4 btn-primary font-bold mt-4">Save Changes</button>
+                        </div>
+                    </div>
+                    <div class="apple-card p-8">
+                        <h3 class="font-bold text-xl mb-6">Account Settings</h3>
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center">
+                                <label class="font-bold text-gray-400 text-sm">EMAIL</label>
+                                <input type="email" value="gireesh@gmail.com" class="w-48 p-2 apple-card text-right outline-none border-0">
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <label class="font-bold text-gray-400 text-sm">NOTIFICATIONS</label>
+                                <label class="switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <label class="font-bold text-gray-400 text-sm">PRIVACY</label>
+                                <select class="w-32 p-2 apple-card outline-none">
+                                    <option>Public</option>
+                                    <option>Private</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Enhanced Trainer Modal -->
+<div id="modal-trainer" class="fixed inset-0 glass-modal flex items-center justify-center z-50 hidden p-6">
+    <div class="apple-card p-10 max-w-2xl w-full shadow-2xl">
+        <div class="flex items-center space-x-6 mb-8">
+            <img id="trainer-img" src="" alt="Coach" class="w-32 h-32 rounded-full border-4 border-white/10 shadow-xl object-cover">
+            <div>
+                <h3 id="trainer-name" class="text-3xl font-black text-white">Samantha</h3>
+                <p id="trainer-specialty" class="text-[#ff6b35] font-bold text-lg">Personal Trainer</p>
+                <div class="flex mt-2">
+                    <i class="fas fa-star text-[#ffd166]"></i>
+                    <i class="fas fa-star text-[#ffd166]"></i>
+                    <i class="fas fa-star text-[#ffd166]"></i>
+                    <i class="fas fa-star text-[#ffd166]"></i>
+                    <i class="far fa-star text-[#ffd166]"></i>
+                    <span class="ml-2 font-bold text-gray-300">4.0 (128 reviews)</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mb-8">
+            <h4 class="font-bold text-xl mb-4 text-white">About</h4>
+            <p id="trainer-bio" class="text-gray-300 leading-relaxed mb-6">Certified personal trainer with 10+ years experience. Specializes in weight loss, strength training, and athletic performance.</p>
+            
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <div class="p-4 apple-card border border-[#ff6b35]/20">
+                    <h5 class="font-bold text-sm mb-2 text-[#ff6b35]">Contact Information</h5>
+                    <p id="trainer-phone" class="text-gray-300"><i class="fas fa-phone mr-2"></i>+91 98765 43210</p>
+                    <p id="trainer-email" class="text-gray-300"><i class="fas fa-envelope mr-2"></i>samantha@wellnest.com</p>
+                </div>
+                <div class="p-4 apple-card border border-[#0071e3]/20">
+                    <h5 class="font-bold text-sm mb-2 text-blue-400">Availability</h5>
+                    <p class="text-gray-300"><i class="fas fa-clock mr-2"></i>Mon-Fri: 6 AM - 8 PM</p>
+                    <p class="text-gray-300"><i class="fas fa-clock mr-2"></i>Sat: 7 AM - 6 PM</p>
+                </div>
+            </div>
+            
+            <div class="p-4 apple-card">
+                <h5 class="font-bold text-sm mb-2 text-gray-400">Specializations</h5>
+                <div class="flex flex-wrap gap-2 mt-2" id="specializations-container">
+                    <span class="px-3 py-1 bg-[#ff6b35]/20 text-[#ff6b35] rounded-full text-xs">Weight Loss</span>
+                    <span class="px-3 py-1 bg-[#ff6b35]/20 text-[#ff6b35] rounded-full text-xs">Strength Training</span>
+                    <span class="px-3 py-1 bg-[#ff6b35]/20 text-[#ff6b35] rounded-full text-xs">Athletic Performance</span>
+                    <span class="px-3 py-1 bg-[#ff6b35]/20 text-[#ff6b35] rounded-full text-xs">Bodybuilding</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="flex space-x-4">
+            <button onclick="closeTrainerProfile()" class="flex-1 py-4 apple-card font-bold hover:bg-white/5">Close</button>
+            <button onclick="contactTrainer()" class="flex-1 py-4 btn-primary font-bold">Contact Trainer</button>
+        </div>
+    </div>
+</div>
+
+<!-- Post Modal -->
+<div id="modal-post" class="fixed inset-0 glass-modal flex items-center justify-center z-50 hidden p-6">
+    <div class="apple-card p-10 max-w-2xl w-full shadow-2xl">
+        <h3 class="text-3xl font-black mb-8 text-white">Create New Post</h3>
+        <div class="space-y-4">
+            <div>
+                <label class="font-bold text-gray-300 mb-2 block">Post Title</label>
+                <input id="post-title" type="text" class="w-full p-4 apple-card outline-none text-lg" placeholder="What's your achievement?">
+            </div>
+            <div>
+                <label class="font-bold text-gray-300 mb-2 block">Category</label>
+                <select id="post-category" class="w-full p-4 apple-card outline-none">
+                    <option value="fitness">🏋️ Fitness Journey</option>
+                    <option value="nutrition">🥗 Nutrition Tips</option>
+                    <option value="wellness">🧘‍♀️ Wellness</option>
+                    <option value="running">🏃 Running</option>
+                    <option value="yoga">🧘 Yoga</option>
+                    <option value="success">🎉 Success Story</option>
+                </select>
+            </div>
+            <div>
+                <label class="font-bold text-gray-300 mb-2 block">Content</label>
+                <textarea id="post-content" class="w-full h-48 p-4 apple-card outline-none" placeholder="Share your story, tips, or achievements..."></textarea>
+            </div>
+        </div>
+        <div class="flex space-x-4 mt-8">
+            <button onclick="togglePostModal()" class="flex-1 py-4 apple-card font-bold hover:bg-white/5">Cancel</button>
+            <button onclick="createPost()" class="flex-1 py-4 btn-primary font-bold">Publish Post</button>
+        </div>
+    </div>
+</div>
+
+<!-- Add Meal Modal -->
+<div id="modal-add-meal" class="fixed inset-0 glass-modal flex items-center justify-center z-50 hidden p-6">
+    <div class="apple-card p-10 max-w-2xl w-full shadow-2xl">
+        <h3 class="text-3xl font-black mb-8 text-white">Add New Meal</h3>
+        <div class="space-y-4">
+            <div>
+                <label class="font-bold text-gray-300 mb-2 block">Meal Type</label>
+                <select id="meal-type" class="w-full p-4 apple-card outline-none">
+                    <option>Breakfast</option>
+                    <option>Lunch</option>
+                    <option>Dinner</option>
+                    <option>Snack</option>
+                </select>
+            </div>
+            <div>
+                <label class="font-bold text-gray-300 mb-2 block">Food Name</label>
+                <input id="food-name" type="text" class="w-full p-4 apple-card outline-none text-lg" placeholder="e.g., Grilled Chicken Salad">
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="font-bold text-gray-300 mb-2 block">Calories</label>
+                    <input id="meal-calories" type="number" class="w-full p-4 apple-card outline-none" placeholder="e.g., 350">
+                </div>
+                <div>
+                    <label class="font-bold text-gray-300 mb-2 block">Quantity</label>
+                    <input id="meal-quantity" type="number" class="w-full p-4 apple-card outline-none" value="1" min="1">
+                </div>
+            </div>
+        </div>
+        <div class="flex space-x-4 mt-8">
+            <button onclick="closeAddMealModal()" class="flex-1 py-4 apple-card font-bold hover:bg-white/5">Cancel</button>
+            <button onclick="saveMeal()" class="flex-1 py-4 btn-primary font-bold">Save Meal</button>
+        </div>
+    </div>
+</div>
+
+<!-- Workout Log Modal -->
+<div id="modal-log-workout" class="fixed inset-0 glass-modal flex items-center justify-center z-50 hidden p-6">
+    <div class="apple-card p-10 max-w-2xl w-full shadow-2xl">
+        <h3 class="text-3xl font-black mb-8 text-white">Log New Workout</h3>
+        <div class="space-y-6">
+            <div>
+                <label class="font-bold text-gray-300 mb-2 block">Workout Type</label>
+                <select id="workout-type" class="w-full p-4 apple-card outline-none" onchange="updateCaloriesEstimate()">
+                    <option value="Running">🏃 Running</option>
+                    <option value="Weightlifting">🏋️ Weightlifting</option>
+                    <option value="Yoga">🧘 Yoga</option>
+                    <option value="Cycling">🚴 Cycling</option>
+                    <option value="Swimming">🏊 Swimming</option>
+                    <option value="HIIT">⚡ HIIT</option>
+                </select>
+            </div>
+            
+            <div>
+                <label class="font-bold text-gray-300 mb-2 block">Intensity Level</label>
+                <select id="workout-intensity" class="w-full p-4 apple-card outline-none" onchange="updateCaloriesEstimate()">
+                    <option value="Light">Light</option>
+                    <option value="Moderate" selected>Moderate</option>
+                    <option value="Intense">Intense</option>
+                    <option value="Extreme">Extreme</option>
+                </select>
+            </div>
+            
+            <div>
+                <label class="font-bold text-gray-300 mb-2 block">Duration (minutes)</label>
+                <div class="flex items-center space-x-4">
+                    <input id="workout-duration" type="range" min="5" max="180" value="45" class="flex-1" oninput="updateDurationValue(this.value)">
+                    <span id="duration-value" class="font-bold text-lg w-16 text-center text-white">45</span>
+                </div>
+            </div>
+            
+            <div>
+                <label class="font-bold text-gray-300 mb-2 block">Calories Burned</label>
+                <div class="relative">
+                    <input id="workout-calories" type="number" class="w-full p-4 apple-card outline-none pr-12" value="300">
+                    <span class="absolute right-4 top-4 text-gray-500">kcal</span>
+                </div>
+            </div>
+            
+            <div>
+                <label class="font-bold text-gray-300 mb-2 block">Notes (Optional)</label>
+                <textarea id="workout-notes" class="w-full p-4 apple-card outline-none h-24" placeholder="How did you feel? Any achievements?"></textarea>
+            </div>
+        </div>
+        
+        <div class="flex space-x-4 mt-8">
+            <button onclick="closeLogWorkoutModal()" class="flex-1 py-4 apple-card font-bold hover:bg-white/5">Cancel</button>
+            <button onclick="saveWorkout()" class="flex-1 py-4 btn-primary font-bold">Save Workout</button>
+        </div>
+    </div>
+</div>
+
+<!-- Workout History Modal -->
+<div id="modal-workout-history" class="fixed inset-0 glass-modal flex items-center justify-center z-50 hidden p-6">
+    <div class="apple-card p-10 max-w-4xl w-full shadow-2xl max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-between items-center mb-8">
+            <h3 class="text-3xl font-black text-white">Workout History</h3>
+            <button onclick="closeWorkoutHistory()" class="p-3 hover:bg-white/10 rounded-full">
+                <i class="fas fa-times text-xl text-gray-400"></i>
+            </button>
+        </div>
+        
+        <div class="mb-8">
+            <h4 class="font-bold text-xl mb-4 text-white">January 2026</h4>
+            <div class="grid grid-cols-7 gap-2 mb-4">
+                <div class="text-center text-xs font-bold text-gray-500 py-2">Sun</div>
+                <div class="text-center text-xs font-bold text-gray-500 py-2">Mon</div>
+                <div class="text-center text-xs font-bold text-gray-500 py-2">Tue</div>
+                <div class="text-center text-xs font-bold text-gray-500 py-2">Wed</div>
+                <div class="text-center text-xs font-bold text-gray-500 py-2">Thu</div>
+                <div class="text-center text-xs font-bold text-gray-500 py-2">Fri</div>
+                <div class="text-center text-xs font-bold text-gray-500 py-2">Sat</div>
+                
+                <!-- Calendar will be populated by JS -->
+            </div>
+        </div>
+        
+        <div>
+            <h4 class="font-bold text-xl mb-4 text-white" id="selected-date">January 3, 2026</h4>
+            <div id="day-workouts" class="space-y-4">
+                <!-- Workouts for selected date will appear here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast Notification -->
+<div id="toast" class="toast hidden">
+    <div class="flex items-center">
+        <i class="fas fa-check-circle text-[#ffd166] mr-3" id="toast-icon"></i>
+        <span id="toast-message" class="text-white">Workout logged successfully!</span>
+    </div>
+</div>
+
+<script>
+    // ============ GLOBAL VARIABLES ============
+    let dailyStats = {
+        steps: 8234,
+        caloriesBurned: 2150,
+        sleepHours: 7.2,
+        waterCount: 6,
+        totalCaloriesConsumed: 1850,
+        protein: 120,
+        carbs: 210,
+        fats: 45
+    };
+
+    let weeklyProgress = {
+        cardio: 85,
+        strength: 70,
+        flexibility: 92
+    };
+
+    let workoutHistoryData = [
+        // January 1, 2026 - New Year Workout
+        {
+            id: 1,
+            type: "Running",
+            emoji: "🏃",
+            name: "New Year Run",
+            duration: 60,
+            calories: 650,
+            intensity: "Moderate",
+            date: "2026-01-01",
+            time: "08:00",
+            notes: "Started the year with a refreshing morning run!",
+            category: "Cardio"
+        },
+        {
+            id: 2,
+            type: "Weightlifting",
+            emoji: "🏋️",
+            name: "Full Body Workout",
+            duration: 45,
+            calories: 320,
+            intensity: "Intense",
+            date: "2026-01-01",
+            time: "17:30",
+            notes: "Felt strong on deadlifts - hit 120kg for 3 reps!",
+            category: "Strength"
+        },
+        
+        // January 2, 2026
+        {
+            id: 3,
+            type: "Cycling",
+            emoji: "🚴",
+            name: "Morning Cycle",
+            duration: 40,
+            calories: 380,
+            intensity: "Moderate",
+            date: "2026-01-02",
+            time: "07:15",
+            notes: "Beautiful sunrise ride through the park",
+            category: "Cardio"
+        },
+        {
+            id: 4,
+            type: "Yoga",
+            emoji: "🧘",
+            name: "Vinyasa Flow",
+            duration: 50,
+            calories: 220,
+            intensity: "Light",
+            date: "2026-01-02",
+            time: "18:30",
+            notes: "Great flexibility session, focused on backbends",
+            category: "Flexibility"
+        },
+        
+        // January 3, 2026 - TODAY (Current date in the UI)
+        {
+            id: 5,
+            type: "Running",
+            emoji: "🏃",
+            name: "Morning Run",
+            duration: 30,
+            calories: 320,
+            intensity: "Moderate",
+            date: "2026-01-03",
+            time: "06:30",
+            notes: "Good pace today, felt strong throughout the run.",
+            category: "Cardio"
+        },
+        {
+            id: 6,
+            type: "Yoga",
+            emoji: "🧘",
+            name: "Evening Yoga",
+            duration: 45,
+            calories: 180,
+            intensity: "Light",
+            date: "2026-01-03",
+            time: "18:00",
+            notes: "Great flexibility session, focused on hip openers.",
+            category: "Flexibility"
+        },
+        
+        // January 4, 2026
+        {
+            id: 7,
+            type: "Weightlifting",
+            emoji: "🏋️",
+            name: "Chest & Triceps",
+            duration: 55,
+            calories: 350,
+            intensity: "Intense",
+            date: "2026-01-04",
+            time: "08:00",
+            notes: "Bench press PR: 80kg for 5 reps!",
+            category: "Strength"
+        },
+        {
+            id: 8,
+            type: "Swimming",
+            emoji: "🏊",
+            name: "Swim Session",
+            duration: 30,
+            calories: 280,
+            intensity: "Moderate",
+            date: "2026-01-04",
+            time: "19:00",
+            notes: "Focused on freestyle technique",
+            category: "Cardio"
+        },
+        
+        // January 5, 2026
+        {
+            id: 9,
+            type: "Running",
+            emoji: "🏃",
+            name: "Interval Training",
+            duration: 35,
+            calories: 400,
+            intensity: "Intense",
+            date: "2026-01-05",
+            time: "07:00",
+            notes: "8x400m intervals with 90s rest. Tough but rewarding!",
+            category: "Cardio"
+        },
+        {
+            id: 10,
+            type: "Weightlifting",
+            emoji: "🏋️",
+            name: "Back & Biceps",
+            duration: 50,
+            calories: 310,
+            intensity: "Moderate",
+            date: "2026-01-05",
+            time: "17:45",
+            notes: "Pull-ups 3x10, feeling stronger each week",
+            category: "Strength"
+        },
+        
+        // January 6, 2026
+        {
+            id: 11,
+            type: "HIIT",
+            emoji: "⚡",
+            name: "HIIT Circuit",
+            duration: 25,
+            calories: 320,
+            intensity: "Extreme",
+            date: "2026-01-06",
+            time: "08:30",
+            notes: "Tabata style - 20s work, 10s rest. Exhausting!",
+            category: "Strength"
+        },
+        {
+            id: 12,
+            type: "Yoga",
+            emoji: "🧘",
+            name: "Restorative Yoga",
+            duration: 40,
+            calories: 150,
+            intensity: "Light",
+            date: "2026-01-06",
+            time: "19:15",
+            notes: "Perfect recovery session after HIIT",
+            category: "Flexibility"
+        },
+        
+        // January 7, 2026
+        {
+            id: 13,
+            type: "Cycling",
+            emoji: "🚴",
+            name: "Long Distance Ride",
+            duration: 75,
+            calories: 650,
+            intensity: "Moderate",
+            date: "2026-01-07",
+            time: "06:45",
+            notes: "25km ride along the river. Beautiful morning!",
+            category: "Cardio"
+        },
+        {
+            id: 14,
+            type: "Weightlifting",
+            emoji: "🏋️",
+            name: "Leg Day",
+            duration: 60,
+            calories: 380,
+            intensity: "Intense",
+            date: "2026-01-07",
+            time: "18:00",
+            notes: "Squats 3x8 @ 100kg. Form improving steadily",
+            category: "Strength"
+        },
+        
+        // January 8, 2026
+        {
+            id: 15,
+            type: "Running",
+            emoji: "🏃",
+            name: "Recovery Run",
+            duration: 25,
+            calories: 250,
+            intensity: "Light",
+            date: "2026-01-08",
+            time: "07:30",
+            notes: "Easy recovery run after yesterday's leg day",
+            category: "Cardio"
+        },
+        {
+            id: 16,
+            type: "Swimming",
+            emoji: "🏊",
+            name: "Swim Drills",
+            duration: 45,
+            calories: 350,
+            intensity: "Moderate",
+            date: "2026-01-08",
+            time: "19:30",
+            notes: "Worked on butterfly stroke technique",
+            category: "Cardio"
+        },
+        
+        // Previous month (December 2025) for the calendar view
+        {
+            id: 17,
+            type: "Running",
+            emoji: "🏃",
+            name: "Tempo Run",
+            duration: 40,
+            calories: 450,
+            intensity: "Intense",
+            date: "2025-12-28",
+            time: "07:00",
+            notes: "Maintained 5:00/km pace for 8km",
+            category: "Cardio"
+        },
+        {
+            id: 18,
+            type: "Weightlifting",
+            emoji: "🏋️",
+            name: "Upper Body",
+            duration: 50,
+            calories: 300,
+            intensity: "Moderate",
+            date: "2025-12-28",
+            time: "18:00",
+            notes: "Good session, increased weights on bench press to 70kg.",
+            category: "Strength"
+        },
+        {
+            id: 19,
+            type: "Yoga",
+            emoji: "🧘",
+            name: "Morning Yoga",
+            duration: 35,
+            calories: 160,
+            intensity: "Light",
+            date: "2025-12-29",
+            time: "06:30",
+            notes: "Great way to start the day",
+            category: "Flexibility"
+        },
+        {
+            id: 20,
+            type: "HIIT",
+            emoji: "⚡",
+            name: "Metabolic Conditioning",
+            duration: 30,
+            calories: 350,
+            intensity: "Extreme",
+            date: "2025-12-29",
+            time: "17:45",
+            notes: "Brutal but effective!",
+            category: "Strength"
+        }
+    ];
+
+    let activityChart;
+    let weeklyWorkoutChart;
+    let hasJoinedChallenge = false;
+
+    // ============ NAVIGATION ============
+    function showSection(id) {
+        document.querySelectorAll('.content-section').forEach(s => s.classList.add('hidden'));
+        document.getElementById(`section-${id}`).classList.remove('hidden');
+        
+        // Remove active class from all sidebar icons
+        document.querySelectorAll('.sidebar-icon').forEach(i => {
+            i.classList.remove('active');
+        });
+        
+        // Add active class to clicked sidebar icon
+        document.getElementById(`nav-${id}`).classList.add('active');
+        
+        // Initialize specific section when shown
+        if (id === 'activity') {
+            initializeWorkoutSection();
+        }
+    }
+
+    // ============ SIGN OUT FUNCTION ============
+    function signOut() {
+        if (confirm("Are you sure you want to sign out?")) {
+            // Show loading state
+            showToast("Signing out...", 'info');
+            
+            // Simulate sign out process
+            setTimeout(() => {
+                // Redirect to login page
+                window.location.href = 'login.html';
+            }, 1000);
+        }
+    }
+
+    // ============ DASHBOARD FUNCTIONS ============
+    function addCustomSteps() {
+        const stepsInput = document.getElementById('steps-input');
+        const amount = parseInt(stepsInput.value) || 0;
+        
+        if (amount <= 0) {
+            alert("Please enter a valid number of steps!");
+            return;
+        }
+        
+        updateSteps(amount);
+        stepsInput.value = '';
+    }
+    
+    function updateSteps(amount) {
+        dailyStats.steps += amount;
+        
+        // Update display
+        const stepsElement = document.getElementById('dash-steps');
+        stepsElement.innerText = dailyStats.steps.toLocaleString();
+        
+        // Update progress bar
+        const progressFill = document.getElementById('steps-progress');
+        let progressWidth = Math.min(100, Math.floor((dailyStats.steps / 10000) * 100));
+        progressFill.style.width = progressWidth + '%';
+        
+        // Update chart
+        updateChart();
+        
+        if(dailyStats.steps >= 10000 && amount > 0) {
+            showToast("🎉 Congratulations! You've reached your daily step goal!", 'success');
+        }
+    }
+    
+    function addCustomCalories() {
+        const caloriesInput = document.getElementById('calories-input');
+        const amount = parseInt(caloriesInput.value) || 0;
+        
+        if (amount <= 0) {
+            alert("Please enter a valid number of calories!");
+            return;
+        }
+        
+        updateCalories(amount);
+        caloriesInput.value = '';
+    }
+    
+    function updateCalories(amount) {
+        dailyStats.caloriesBurned += amount;
+        
+        // Update display
+        const caloriesElement = document.getElementById('dash-calories');
+        caloriesElement.innerText = dailyStats.caloriesBurned.toLocaleString();
+        
+        // Update progress bar
+        const progressFill = document.getElementById('calories-progress');
+        let progressWidth = Math.min(100, Math.floor((dailyStats.caloriesBurned / 2500) * 100));
+        progressFill.style.width = progressWidth + '%';
+        
+        if(dailyStats.caloriesBurned >= 2500 && amount > 0) {
+            showToast("🔥 Amazing! You've reached your daily calorie burn goal!", 'success');
+        }
+    }
+    
+    function addCustomSleep() {
+        const sleepInput = document.getElementById('sleep-input');
+        const amount = parseFloat(sleepInput.value) || 0;
+        
+        if (amount <= 0) {
+            alert("Please enter a valid number of hours!");
+            return;
+        }
+        
+        updateSleep(amount);
+        sleepInput.value = '';
+    }
+    
+    function updateSleep(amount) {
+        dailyStats.sleepHours += amount;
+        
+        // Update display
+        const sleepElement = document.getElementById('sleep-hours');
+        sleepElement.innerText = dailyStats.sleepHours.toFixed(1);
+        
+        // Update progress bar (assuming 8 hours is 100%)
+        const progressFill = document.getElementById('sleep-progress');
+        let progressWidth = Math.min(100, Math.floor((dailyStats.sleepHours / 8) * 100));
+        progressFill.style.width = progressWidth + '%';
+        
+        // Update sleep status
+        const sleepStatus = document.getElementById('sleep-status');
+        if(dailyStats.sleepHours >= 8) {
+            sleepStatus.innerText = "Excellent sleep!";
+            sleepStatus.className = "text-xs text-[#ffd166] mt-2 font-bold";
+        } else if(dailyStats.sleepHours >= 7) {
+            sleepStatus.innerText = "Good sleep";
+            sleepStatus.className = "text-xs text-[#ffd166] mt-2 font-bold";
+        } else if(dailyStats.sleepHours >= 6) {
+            sleepStatus.innerText = "Adequate sleep";
+            sleepStatus.className = "text-xs text-yellow-400 mt-2 font-bold";
+        } else {
+            sleepStatus.innerText = "Need more sleep";
+            sleepStatus.className = "text-xs text-red-400 mt-2 font-bold";
+        }
+    }
+
+    // ============ CHART FUNCTIONS ============
+    function initChart() {
+        const ctx = document.getElementById('activityChart').getContext('2d');
+        activityChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Dec 28', 'Dec 29', 'Dec 30', 'Dec 31', 'Jan 1', 'Jan 2', 'Jan 3'],
+                datasets: [{
+                    label: 'Steps (in thousands)',
+                    data: [8.1, 7.8, 9.2, 8.5, 10.2, 8.7, 8.2],
+                    borderColor: '#ff6b35',
+                    backgroundColor: 'rgba(255, 107, 53, 0.05)',
+                    borderWidth: 4,
+                    tension: 0.4,
+                    fill: true,
+                    pointRadius: 6,
+                    pointBackgroundColor: '#ff6b35',
+                    pointBorderColor: '#0a0a0a',
+                    pointBorderWidth: 2
+                }]
+            },
+            options: { 
+                plugins: { 
+                    legend: { 
+                        display: false 
+                    } 
+                }, 
+                scales: { 
+                    y: { 
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(255,255,255,0.05)'
+                        },
+                        ticks: {
+                            color: '#94a3b8',
+                            callback: function(value) {
+                                return value + 'K';
+                            }
+                        }
+                    }, 
+                    x: { 
+                        grid: { 
+                            display: false 
+                        },
+                        ticks: {
+                            color: '#94a3b8'
+                        }
+                    } 
+                },
+                interaction: {
+                    intersect: false,
+                    mode: 'index'
+                }
+            }
+        });
+    }
+    
+    function updateChart() {
+        const steps = dailyStats.steps;
+        const stepsInK = (steps / 1000).toFixed(1);
+        
+        // Update the last data point (today)
+        activityChart.data.datasets[0].data[6] = parseFloat(stepsInK);
+        
+        // Add some variation to previous days for realism
+        for(let i = 0; i < 6; i++) {
+            const variation = (Math.random() * 0.5) - 0.25; // -0.25 to +0.25
+            activityChart.data.datasets[0].data[i] = Math.max(6, Math.min(10, 
+                activityChart.data.datasets[0].data[i] + variation));
+        }
+        
+        activityChart.update();
+    }
+
+    // ============ WORKOUT TRACKER FUNCTIONS ============
+    function initializeWorkoutSection() {
+        updateWorkoutStats();
+        renderWorkoutHistoryPreview();
+        if (!weeklyWorkoutChart) {
+            initWeeklyWorkoutChart();
+        }
+        updateWeeklyProgressDisplay();
+    }
+
+    function initializeJanuaryWorkoutData() {
+        // Get today's date (January 3, 2026)
+        const today = '2026-01-03';
+        const todaysWorkouts = workoutHistoryData.filter(w => w.date === today);
+        
+        // Calculate totals for today
+        const totalCalories = todaysWorkouts.reduce((sum, w) => sum + w.calories, 0);
+        const totalDuration = todaysWorkouts.reduce((sum, w) => sum + w.duration, 0);
+        
+        // Update dashboard calories
+        dailyStats.caloriesBurned = totalCalories;
+        document.getElementById('dash-calories').textContent = totalCalories.toLocaleString();
+        document.getElementById('total-calories').textContent = totalCalories.toLocaleString();
+        
+        // Update workout time
+        const hours = Math.floor(totalDuration / 60);
+        const minutes = totalDuration % 60;
+        document.getElementById('total-time').textContent = hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
+        
+        // Update sessions
+        document.getElementById('total-sessions').textContent = todaysWorkouts.length;
+        
+        // Update progress bars
+        const progressFill = document.getElementById('calories-progress');
+        let progressWidth = Math.min(100, Math.floor((totalCalories / 2500) * 100));
+        progressFill.style.width = progressWidth + '%';
+        
+        // Update weekly progress based on this week's workouts
+        updateWeeklyProgressBasedOnHistory();
+    }
+
+    function updateWeeklyProgressBasedOnHistory() {
+        // Reset weekly progress
+        weeklyProgress = { cardio: 0, strength: 0, flexibility: 0 };
+        
+        // Get this week's workouts (Jan 1-7, 2026)
+        const thisWeeksWorkouts = workoutHistoryData.filter(w => {
+            const date = new Date(w.date);
+            return date >= new Date('2026-01-01') && date <= new Date('2026-01-07');
+        });
+        
+        // Calculate progress based on workouts
+        thisWeeksWorkouts.forEach(workout => {
+            let increaseAmount = Math.min(workout.duration / 5, 15);
+            
+            if(workout.category === "Cardio") {
+                weeklyProgress.cardio = Math.min(100, weeklyProgress.cardio + increaseAmount);
+            }
+            else if(workout.category === "Strength") {
+                weeklyProgress.strength = Math.min(100, weeklyProgress.strength + increaseAmount);
+            }
+            else if(workout.category === "Flexibility") {
+                weeklyProgress.flexibility = Math.min(100, weeklyProgress.flexibility + increaseAmount);
+            }
+        });
+        
+        // Ensure minimum progress
+        weeklyProgress.cardio = Math.max(weeklyProgress.cardio, 85);
+        weeklyProgress.strength = Math.max(weeklyProgress.strength, 70);
+        weeklyProgress.flexibility = Math.max(weeklyProgress.flexibility, 92);
+        
+        updateWeeklyProgressDisplay();
+    }
+
+    function logWorkoutModal() {
+        document.getElementById('modal-log-workout').classList.remove('hidden');
+        updateCaloriesEstimate();
+    }
+
+    function closeLogWorkoutModal() {
+        document.getElementById('modal-log-workout').classList.add('hidden');
+    }
+
+    function updateDurationValue(value) {
+        document.getElementById('duration-value').textContent = value;
+        updateCaloriesEstimate();
+    }
+
+    function updateCaloriesEstimate() {
+        const type = document.getElementById('workout-type').value;
+        const intensity = document.getElementById('workout-intensity').value;
+        const duration = parseInt(document.getElementById('workout-duration').value) || 45;
+        
+        let caloriesPerMin = 8; // Default for moderate
+        
+        if (intensity === 'Light') caloriesPerMin = 5;
+        if (intensity === 'Intense') caloriesPerMin = 12;
+        if (intensity === 'Extreme') caloriesPerMin = 15;
+        
+        // Adjust for workout type
+        if (type === 'Weightlifting') caloriesPerMin *= 0.8;
+        if (type === 'Yoga') caloriesPerMin *= 0.6;
+        if (type === 'HIIT') caloriesPerMin *= 1.3;
+        
+        const calculatedCalories = Math.round(duration * caloriesPerMin);
+        document.getElementById('workout-calories').value = calculatedCalories;
+    }
+
+    function startQuickWorkout(name, duration, type) {
+        document.getElementById('workout-type').value = type;
+        document.getElementById('workout-duration').value = duration;
+        document.getElementById('duration-value').textContent = duration;
+        updateCaloriesEstimate();
+        logWorkoutModal();
+    }
+
+    function saveWorkout() {
+        const type = document.getElementById('workout-type').value;
+        const duration = parseInt(document.getElementById('workout-duration').value) || 0;
+        const calories = parseInt(document.getElementById('workout-calories').value) || 0;
+        const intensity = document.getElementById('workout-intensity').value;
+        const notes = document.getElementById('workout-notes').value;
+        
+        if(!duration || !calories || duration <= 0 || calories <= 0) {
+            showToast("Please fill in valid duration and calories!", 'error');
+            return;
+        }
+        
+        // Get emoji for workout type
+        const emojiMap = {
+            'Running': '🏃',
+            'Weightlifting': '🏋️',
+            'Yoga': '🧘',
+            'Cycling': '🚴',
+            'Swimming': '🏊',
+            'HIIT': '⚡'
+        };
+        
+        const emoji = emojiMap[type] || '🏋️';
+        
+        // Get category
+        const categoryMap = {
+            'Running': 'Cardio',
+            'Cycling': 'Cardio',
+            'Swimming': 'Cardio',
+            'Weightlifting': 'Strength',
+            'HIIT': 'Strength',
+            'Yoga': 'Flexibility'
+        };
+        
+        const category = categoryMap[type] || 'General';
+        
+        // Get current time
+        const now = new Date();
+        const dateStr = now.toISOString().split('T')[0];
+        const timeStr = now.toTimeString().split(' ')[0].substring(0, 5);
+        
+        // Create workout object
+        const newWorkout = {
+            id: workoutHistoryData.length + 1,
+            type: type,
+            emoji: emoji,
+            name: `${type} Session`,
+            duration: duration,
+            calories: calories,
+            intensity: intensity,
+            date: dateStr,
+            time: timeStr,
+            notes: notes || "No notes provided.",
+            category: category
+        };
+        
+        // Add to history
+        workoutHistoryData.unshift(newWorkout);
+        
+        // Update today's workout list
+        const workoutList = document.getElementById('workout-list');
+        const workoutElement = document.createElement('div');
+        
+        const colorClass = getWorkoutColorClass(category);
+        const textColor = getWorkoutTextColor(category);
+        
+        workoutElement.className = `flex justify-between items-center p-5 apple-card border border-${colorClass}/30 new-workout`;
+        workoutElement.innerHTML = `
+            <div class="flex items-center space-x-4">
+                <div class="p-3 bg-gradient-to-br from-${colorClass} to-${textColor} text-white rounded-full font-bold text-lg">${emoji}</div>
+                <div>
+                    <p class="font-bold">${type} Session</p>
+                    <p class="text-xs text-gray-400">${timeStr} • ${intensity}</p>
+                    <div class="flex items-center mt-1">
+                        <span class="text-xs bg-${colorClass}/20 text-${textColor} px-2 py-1 rounded-full mr-2">${category}</span>
+                        <span class="text-xs bg-white/10 text-gray-300 px-2 py-1 rounded-full">${intensity}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="text-right">
+                <p class="font-bold text-lg">${duration} min</p>
+                <p class="text-sm text-[#ff6b35] font-bold">${calories} kcal</p>
+                <div class="mt-2">
+                    <button class="text-xs text-${textColor} hover:text-${textColor}-200" onclick="viewWorkoutDetails(this, '${type} Session', ${duration}, ${calories}, '${type}')">
+                        <i class="fas fa-chart-line mr-1"></i>View Details
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        workoutList.insertBefore(workoutElement, workoutList.firstChild);
+        
+        // Hide empty state
+        document.getElementById('empty-workouts').classList.add('hidden');
+        
+        // Update dashboard stats
+        updateDashboardFromWorkout(calories, duration, type);
+        
+        // Update weekly progress
+        updateWeeklyProgress(type, duration);
+        
+        // Update workout stats
+        updateWorkoutStats();
+        
+        // Update history preview
+        renderWorkoutHistoryPreview();
+        
+        // Clear and close modal
+        document.getElementById('workout-notes').value = '';
+        closeLogWorkoutModal();
+        
+        // Show success message
+        showToast(`✅ Workout logged! ${calories} calories burned`, 'success');
+        
+        // Celebration animation
+        setTimeout(() => {
+            workoutElement.classList.add('celebrate');
+            setTimeout(() => {
+                workoutElement.classList.remove('celebrate');
+            }, 500);
+        }, 100);
+    }
+
+    function getWorkoutColorClass(category) {
+        switch(category) {
+            case 'Cardio': return '[#0071e3]';
+            case 'Strength': return '[#ff6b35]';
+            case 'Flexibility': return '[#ffd166]';
+            default: return 'white';
+        }
+    }
+
+    function getWorkoutTextColor(category) {
+        switch(category) {
+            case 'Cardio': return 'blue-400';
+            case 'Strength': return 'orange-400';
+            case 'Flexibility': return 'yellow-400';
+            default: return 'gray-400';
+        }
+    }
+
+    function updateDashboardFromWorkout(calories, duration, type) {
+        // Add calories to dashboard
+        updateCalories(calories);
+        
+        // Add steps based on workout type
+        let stepsToAdd = 0;
+        if(type === "Running") stepsToAdd = duration * 100;
+        else if(type === "Cycling") stepsToAdd = duration * 50;
+        else if(type === "Weightlifting") stepsToAdd = duration * 30;
+        else if(type === "Yoga") stepsToAdd = duration * 20;
+        else if(type === "Swimming") stepsToAdd = duration * 40;
+        else if(type === "HIIT") stepsToAdd = duration * 80;
+        
+        if(stepsToAdd > 0) {
+            updateSteps(stepsToAdd);
+        }
+    }
+
+    function updateWeeklyProgress(type, duration) {
+        // Increase progress based on workout type and duration
+        let increaseAmount = Math.min(duration / 2, 10); // Max 10% increase per workout
+        
+        if(type === "Running" || type === "Cycling" || type === "Swimming" || type === "HIIT") {
+            weeklyProgress.cardio = Math.min(100, weeklyProgress.cardio + increaseAmount);
+        }
+        else if(type === "Weightlifting") {
+            weeklyProgress.strength = Math.min(100, weeklyProgress.strength + increaseAmount);
+        }
+        else if(type === "Yoga") {
+            weeklyProgress.flexibility = Math.min(100, weeklyProgress.flexibility + increaseAmount);
+        }
+        
+        updateWeeklyProgressDisplay();
+    }
+
+    function updateWeeklyProgressDisplay() {
+        // Update progress bars
+        document.getElementById('cardio-progress-bar').style.width = weeklyProgress.cardio + '%';
+        document.getElementById('cardio-progress-text').textContent = Math.round(weeklyProgress.cardio) + '%';
+        
+        document.getElementById('strength-progress-bar').style.width = weeklyProgress.strength + '%';
+        document.getElementById('strength-progress-text').textContent = Math.round(weeklyProgress.strength) + '%';
+        
+        document.getElementById('flexibility-progress-bar').style.width = weeklyProgress.flexibility + '%';
+        document.getElementById('flexibility-progress-text').textContent = Math.round(weeklyProgress.flexibility) + '%';
+    }
+
+    function updateWorkoutStats() {
+        // Calculate total calories and time for today
+        const today = '2026-01-03';
+        const todaysWorkouts = workoutHistoryData.filter(w => w.date === today);
+        const totalCalories = todaysWorkouts.reduce((sum, w) => sum + w.calories, 0);
+        const totalTime = todaysWorkouts.reduce((sum, w) => sum + w.duration, 0);
+        
+        // Update display
+        document.getElementById('total-calories').textContent = totalCalories.toLocaleString();
+        
+        // Format time
+        const hours = Math.floor(totalTime / 60);
+        const minutes = totalTime % 60;
+        document.getElementById('total-time').textContent = hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
+        
+        // Update sessions
+        document.getElementById('total-sessions').textContent = todaysWorkouts.length;
+        
+        // Update empty state
+        if (todaysWorkouts.length === 0) {
+            document.getElementById('empty-workouts').classList.remove('hidden');
+        } else {
+            document.getElementById('empty-workouts').classList.add('hidden');
+        }
+    }
+
+    function renderWorkoutHistoryPreview() {
+        const historyContainer = document.getElementById('workout-history-preview');
+        historyContainer.innerHTML = '';
+        
+        // Get last 3 workouts
+        const recentWorkouts = workoutHistoryData.slice(0, 3);
+        
+        recentWorkouts.forEach(workout => {
+            const date = new Date(workout.date);
+            const formattedDate = date.toLocaleDateString('en-US', { 
+                month: 'short', 
+                day: 'numeric' 
+            });
+            
+            const workoutElement = document.createElement('div');
+            workoutElement.className = 'flex items-center justify-between p-3 hover:bg-white/5 rounded-xl cursor-pointer';
+            workoutElement.onclick = () => showDayWorkouts(workout.date);
+            
+            workoutElement.innerHTML = `
+                <div class="flex items-center space-x-3">
+                    <div class="p-2 bg-gradient-to-br from-${getWorkoutColorClass(workout.category)} to-${getWorkoutTextColor(workout.category)} text-white rounded-full">${workout.emoji}</div>
+                    <div>
+                        <p class="font-bold text-sm text-white">${workout.name}</p>
+                        <p class="text-xs text-gray-400">${formattedDate} • ${workout.duration} min</p>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <p class="text-sm font-bold text-[#ff6b35]">${workout.calories} kcal</p>
+                    <span class="text-xs px-2 py-1 rounded-full ${getIntensityColorClass(workout.intensity)}">${workout.intensity}</span>
+                </div>
+            `;
+            
+            historyContainer.appendChild(workoutElement);
+        });
+    }
+
+    function getIntensityColorClass(intensity) {
+        switch(intensity) {
+            case 'Light': return 'bg-[#ffd166]/20 text-[#ffd166]';
+            case 'Moderate': return 'bg-[#ff6b35]/20 text-[#ff6b35]';
+            case 'Intense': return 'bg-[#ff6b35]/30 text-orange-400';
+            case 'Extreme': return 'bg-red-500/20 text-red-400';
+            default: return 'bg-white/10 text-gray-300';
+        }
+    }
+
+    function initWeeklyWorkoutChart() {
+        const ctx = document.getElementById('weeklyWorkoutChart').getContext('2d');
+        
+        // Sample data for the week (Jan 1-7)
+        const days = ['Jan 1', 'Jan 2', 'Jan 3', 'Jan 4', 'Jan 5', 'Jan 6', 'Jan 7'];
+        
+        // Calculate calories for each day
+        const caloriesData = days.map(day => {
+            const dateMap = {
+                'Jan 1': '2026-01-01',
+                'Jan 2': '2026-01-02',
+                'Jan 3': '2026-01-03',
+                'Jan 4': '2026-01-04',
+                'Jan 5': '2026-01-05',
+                'Jan 6': '2026-01-06',
+                'Jan 7': '2026-01-07'
+            };
+            const date = dateMap[day];
+            const dayWorkouts = workoutHistoryData.filter(w => w.date === date);
+            return dayWorkouts.reduce((sum, w) => sum + w.calories, 0) / 100; // Divide by 100 for chart scale
+        });
+        
+        weeklyWorkoutChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: days,
+                datasets: [
+                    {
+                        label: 'Calories (hundreds)',
+                        data: caloriesData,
+                        backgroundColor: '#ff6b35',
+                        borderRadius: 8,
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false,
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            color: '#94a3b8'
+                        }
+                    },
+                    y: {
+                        grid: {
+                            color: 'rgba(255,255,255,0.05)'
+                        },
+                        title: {
+                            display: true,
+                            text: 'Calories (hundreds)',
+                            color: '#94a3b8'
+                        },
+                        ticks: {
+                            color: '#94a3b8'
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function showWorkoutHistory() {
+        document.getElementById('modal-workout-history').classList.remove('hidden');
+        renderCalendar();
+        showDayWorkouts('2026-01-03');
+    }
+
+    function closeWorkoutHistory() {
+        document.getElementById('modal-workout-history').classList.add('hidden');
+    }
+
+    function renderCalendar() {
+        const calendarGrid = document.querySelector('#modal-workout-history .grid-cols-7');
+        // Skip header rows (first 7 children are day labels)
+        while (calendarGrid.children.length > 7) {
+            calendarGrid.removeChild(calendarGrid.lastChild);
+        }
+        
+        // Set month and year
+        const monthTitle = document.querySelector('#modal-workout-history h4:first-of-type');
+        monthTitle.textContent = 'January 2026';
+        
+        // January 2026 starts on Thursday (0=Sunday, 1=Monday, 2=Tuesday, 3=Wednesday, 4=Thursday)
+        const startDay = 4; // Thursday
+        const daysInMonth = 31;
+        
+        // Add empty days for start of month
+        for (let i = 0; i < startDay; i++) {
+            const emptyDay = document.createElement('div');
+            emptyDay.className = 'text-center py-2';
+            calendarGrid.appendChild(emptyDay);
+        }
+        
+        // Add days
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dayElement = document.createElement('div');
+            dayElement.className = 'text-center py-2 rounded-lg cursor-pointer hover:bg-white/5';
+            dayElement.textContent = day;
+            
+            // Format date string
+            const dateStr = `2026-01-${day.toString().padStart(2, '0')}`;
+            const hasWorkout = workoutHistoryData.some(w => w.date === dateStr);
+            
+            if (hasWorkout) {
+                dayElement.className += ' bg-[#ff6b35]/20 text-[#ff6b35] font-bold';
+                dayElement.onclick = () => showDayWorkouts(dateStr);
+            } else {
+                dayElement.className += ' text-gray-500';
+            }
+            
+            // Highlight today (Jan 3, 2026)
+            if (day === 3) {
+                dayElement.className += ' border-2 border-[#ff6b35]';
+                dayElement.onclick = () => showDayWorkouts(dateStr);
+            }
+            
+            calendarGrid.appendChild(dayElement);
+        }
+    }
+
+    function showDayWorkouts(date) {
+        const workouts = workoutHistoryData.filter(w => w.date === date);
+        const dayWorkoutsContainer = document.getElementById('day-workouts');
+        const selectedDateElement = document.getElementById('selected-date');
+        
+        // Format date
+        const dateObj = new Date(date);
+        const formattedDate = dateObj.toLocaleDateString('en-US', { 
+            weekday: 'long', 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+        });
+        
+        selectedDateElement.textContent = formattedDate;
+        
+        if (workouts.length === 0) {
+            dayWorkoutsContainer.innerHTML = `
+                <div class="text-center py-8">
+                    <div class="text-4xl mb-4">🏋️</div>
+                    <p class="text-gray-400">No workouts recorded on this day.</p>
+                </div>
+            `;
+            return;
+        }
+        
+        let html = '';
+        
+        workouts.forEach(workout => {
+            const colorClass = getWorkoutColorClass(workout.category);
+            const textColor = getWorkoutTextColor(workout.category);
+            
+            html += `
+                <div class="p-4 apple-card">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-3">
+                            <div class="p-2 bg-gradient-to-br from-${colorClass} to-${textColor} text-white rounded-full">${workout.emoji}</div>
+                            <div>
+                                <h5 class="font-bold text-white">${workout.name}</h5>
+                                <p class="text-xs text-gray-500">${workout.time} • ${workout.intensity}</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-bold text-white">${workout.duration} min</p>
+                            <p class="text-sm text-[#ff6b35] font-bold">${workout.calories} kcal</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Progress for this workout -->
+                    <div class="mt-4">
+                        <div class="flex justify-between text-xs mb-1">
+                            <span class="text-gray-400">Intensity: ${workout.intensity}</span>
+                            <span class="text-gray-400">${Math.round(workout.calories / workout.duration)} kcal/min</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill ${getIntensityProgressColor(workout.intensity)}" 
+                                 style="width: ${getIntensityWidth(workout.intensity)}%"></div>
+                        </div>
+                    </div>
+                    
+                    <p class="text-sm text-gray-300 mt-3 italic">"${workout.notes}"</p>
+                </div>
+            `;
+        });
+        
+        // Add summary
+        const totalCalories = workouts.reduce((sum, w) => sum + w.calories, 0);
+        const totalDuration = workouts.reduce((sum, w) => sum + w.duration, 0);
+        
+        html += `
+            <div class="p-4 apple-card bg-gradient-to-r from-[#ff6b35]/10 to-[#0071e3]/10">
+                <h5 class="font-bold mb-2 text-white">Day Summary</h5>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <p class="text-xs text-gray-400">Total Workouts</p>
+                        <p class="text-xl font-black text-[#ff6b35]">${workouts.length}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-400">Total Calories</p>
+                        <p class="text-xl font-black text-[#ff6b35]">${totalCalories}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-400">Total Duration</p>
+                        <p class="text-xl font-black text-blue-400">${totalDuration} min</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-400">Avg Intensity</p>
+                        <p class="text-xl font-black text-[#ffd166]">${getAverageIntensity(workouts)}</p>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        dayWorkoutsContainer.innerHTML = html;
+    }
+
+    function getIntensityProgressColor(intensity) {
+        switch(intensity) {
+            case 'Light': return 'bg-[#ffd166]';
+            case 'Moderate': return 'bg-[#ff6b35]';
+            case 'Intense': return 'bg-orange-500';
+            case 'Extreme': return 'bg-red-500';
+            default: return 'bg-gray-500';
+        }
+    }
+
+    function getIntensityWidth(intensity) {
+        switch(intensity) {
+            case 'Light': return 25;
+            case 'Moderate': return 50;
+            case 'Intense': return 75;
+            case 'Extreme': return 100;
+            default: return 25;
+        }
+    }
+
+    function getAverageIntensity(workouts) {
+        const intensityValues = {
+            'Light': 1,
+            'Moderate': 2,
+            'Intense': 3,
+            'Extreme': 4
+        };
+        
+        const avg = workouts.reduce((sum, w) => sum + intensityValues[w.intensity], 0) / workouts.length;
+        
+        if (avg < 1.5) return 'Light';
+        if (avg < 2.5) return 'Moderate';
+        if (avg < 3.5) return 'Intense';
+        return 'Extreme';
+    }
+
+    function viewWorkoutDetails(button, name, duration, calories, type) {
+        alert(`Workout Details:\n\nName: ${name}\nDuration: ${duration} minutes\nCalories: ${calories}\nType: ${type}\n\nDetailed analytics would show here in a real app!`);
+    }
+
+    function showToast(message, type = 'info') {
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toast-message');
+        const toastIcon = document.getElementById('toast-icon');
+        
+        toastMessage.innerText = message;
+        
+        // Set icon based on type
+        if (type === 'success') {
+            toastIcon.className = 'fas fa-check-circle text-[#ffd166] mr-3';
+        } else if (type === 'error') {
+            toastIcon.className = 'fas fa-exclamation-circle text-[#ff6b35] mr-3';
+        } else if (type === 'info') {
+            toastIcon.className = 'fas fa-info-circle text-[#0071e3] mr-3';
+        }
+        
+        toast.classList.remove('hidden');
+        toast.classList.add('show');
+        
+        // Auto-hide after 3 seconds
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 300);
+        }, 3000);
+    }
+
+    // ============ NUTRITION TRACKER FUNCTIONS ============
+    function openAddMealModal() {
+        document.getElementById('modal-add-meal').classList.remove('hidden');
+        document.getElementById('food-name').value = '';
+        document.getElementById('meal-calories').value = '';
+        document.getElementById('meal-quantity').value = 1;
+    }
+
+    function closeAddMealModal() {
+        document.getElementById('modal-add-meal').classList.add('hidden');
+    }
+
+    function saveMeal() {
+        const mealType = document.getElementById('meal-type').value;
+        const foodName = document.getElementById('food-name').value.trim();
+        const calories = parseInt(document.getElementById('meal-calories').value) || 0;
+        const quantity = parseInt(document.getElementById('meal-quantity').value) || 1;
+        
+        // Validation
+        if (!foodName) {
+            showToast("Please enter a food name!", 'error');
+            return;
+        }
+        
+        if (!calories || calories <= 0) {
+            showToast("Please enter valid calories!", 'error');
+            return;
+        }
+        
+        if (!quantity || quantity <= 0) {
+            showToast("Please enter valid quantity!", 'error');
+            return;
+        }
+        
+        const totalCalories = calories * quantity;
+        
+        // Update daily stats
+        dailyStats.totalCaloriesConsumed += totalCalories;
+        updateNutritionDisplay();
+        
+        // Color mapping for meal types
+        const colorMap = {
+            'Breakfast': { bg: '[#0071e3]', text: 'blue-300' },
+            'Lunch': { bg: '[#ff6b35]', text: 'orange-300' },
+            'Dinner': { bg: '[#ffd166]', text: 'yellow-300' },
+            'Snack': { bg: 'white', text: 'gray-300' }
+        };
+        
+        const colors = colorMap[mealType] || { bg: 'white', text: 'gray-300' };
+        
+        // Create meal element
+        const mealElement = document.createElement('div');
+        mealElement.className = `p-6 apple-card border border-${colors.bg}/30`;
+        mealElement.innerHTML = `
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="text-xs font-black text-${colors.text} uppercase mb-1">${mealType}</p>
+                    <h4 class="font-bold text-white">${foodName} ${quantity > 1 ? '(x' + quantity + ')' : ''}</h4>
+                </div>
+                <button onclick="removeMeal(this, ${totalCalories})" class="text-gray-500 hover:text-[#ff6b35]">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <p class="text-sm text-gray-400 mt-2">🔥 ${totalCalories} kcal • 🥛 ${Math.round(totalCalories * 0.05)}g protein</p>
+        `;
+        
+        // Add to meal list
+        document.getElementById('meal-list').appendChild(mealElement);
+        
+        // Close modal
+        closeAddMealModal();
+        
+        showToast(`${mealType} added successfully! ${foodName} (${totalCalories} kcal)`, 'success');
+    }
+
+    function removeMeal(button, calories) {
+        if (confirm("Are you sure you want to remove this meal?")) {
+            // Update daily stats
+            dailyStats.totalCaloriesConsumed -= calories;
+            updateNutritionDisplay();
+            
+            // Remove element
+            button.closest('div[class*="apple-card"]').remove();
+            showToast("Meal removed successfully", 'info');
+        }
+    }
+
+    function updateNutritionDisplay() {
+        // Update calorie goal in nutrition section
+        document.getElementById('calories-consumed').textContent = dailyStats.totalCaloriesConsumed;
+        
+        // Update progress bar
+        const progressBar = document.getElementById('calorie-progress-bar');
+        const progressWidth = Math.min(100, Math.floor((dailyStats.totalCaloriesConsumed / 2200) * 100));
+        progressBar.style.width = progressWidth + '%';
+        
+        // Update remaining calories
+        const remaining = 2200 - dailyStats.totalCaloriesConsumed;
+        document.getElementById('remaining-calories').textContent = `Remaining: ${remaining} kcal`;
+        
+        // Update nutrition overview in dashboard
+        document.getElementById('protein-display').textContent = dailyStats.protein + 'g / 150g';
+        document.getElementById('carbs-display').textContent = dailyStats.carbs + 'g / 300g';
+        document.getElementById('fats-display').textContent = dailyStats.fats + 'g / 70g';
+        
+        document.getElementById('protein-total').textContent = dailyStats.protein + 'g';
+        document.getElementById('carbs-total').textContent = dailyStats.carbs + 'g';
+        document.getElementById('fats-total').textContent = dailyStats.fats + 'g';
+        
+        // Update progress bars in dashboard
+        const proteinProgress = Math.min(100, Math.floor((dailyStats.protein / 150) * 100));
+        const carbsProgress = Math.min(100, Math.floor((dailyStats.carbs / 300) * 100));
+        const fatsProgress = Math.min(100, Math.floor((dailyStats.fats / 70) * 100));
+        
+        document.getElementById('protein-progress').style.width = proteinProgress + '%';
+        document.getElementById('carbs-progress').style.width = carbsProgress + '%';
+        document.getElementById('fats-progress').style.width = fatsProgress + '%';
+    }
+
+    // ============ WATER TRACKER ============
+    function addWater() {
+        if(dailyStats.waterCount < 8) {
+            dailyStats.waterCount++;
+            document.getElementById('water-count').innerText = dailyStats.waterCount;
+            document.getElementById('dash-water-count').innerText = dailyStats.waterCount;
+            
+            if(dailyStats.waterCount === 8) {
+                showToast("🎉 Congratulations! You've reached your daily hydration goal!", 'success');
+            }
+        } else {
+            showToast("You've already reached your daily water goal! 🎉", 'info');
+        }
+    }
+
+    // ============ PROFILE FUNCTIONS ============
+    function saveProfile() {
+        const w = parseFloat(document.getElementById('p-weight').value) || 65;
+        const h = parseFloat(document.getElementById('p-height').value) || 170;
+        const bmi = (w / ((h/100) * (h/100))).toFixed(1);
+        
+        // Update BMI display
+        document.getElementById('bmi-value').innerText = bmi;
+        
+        // Update BMI status
+        const bmiStatus = document.getElementById('bmi-status');
+        if(bmi < 18.5) {
+            bmiStatus.textContent = "Underweight";
+            bmiStatus.className = "mt-2 inline-block px-2 py-1 bg-yellow-500/20 text-yellow-300 rounded-lg text-xs font-bold uppercase";
+        } else if(bmi < 25) {
+            bmiStatus.textContent = "Healthy Weight";
+            bmiStatus.className = "mt-2 inline-block px-2 py-1 bg-[#ff6b35]/20 text-[#ff6b35] rounded-lg text-xs font-bold uppercase";
+        } else if(bmi < 30) {
+            bmiStatus.textContent = "Overweight";
+            bmiStatus.className = "mt-2 inline-block px-2 py-1 bg-orange-500/20 text-orange-300 rounded-lg text-xs font-bold uppercase";
+        } else {
+            bmiStatus.textContent = "Obese";
+            bmiStatus.className = "mt-2 inline-block px-2 py-1 bg-red-500/20 text-red-300 rounded-lg text-xs font-bold uppercase";
+        }
+        
+        showToast("Profile Updated!", 'success');
+    }
+
+    // ============ TRAINER MODAL FUNCTIONS ============
+    function openTrainerProfile(name, specialty, bio, img, phone, email) {
+        document.getElementById('trainer-name').innerText = name;
+        document.getElementById('trainer-specialty').innerText = specialty;
+        document.getElementById('trainer-bio').innerText = bio;
+        document.getElementById('trainer-img').src = img;
+        document.getElementById('trainer-phone').innerHTML = `<i class="fas fa-phone mr-2"></i>${phone}`;
+        document.getElementById('trainer-email').innerHTML = `<i class="fas fa-envelope mr-2"></i>${email}`;
+        
+        // Update specialization tags based on specialty
+        const specializationsContainer = document.getElementById('specializations-container');
+        specializationsContainer.innerHTML = '';
+        
+        // Add specialization tags based on coach type
+        const tags = getSpecializationTags(specialty);
+        tags.forEach(tag => {
+            const span = document.createElement('span');
+            span.className = 'px-3 py-1 bg-[#ff6b35]/20 text-[#ff6b35] rounded-full text-xs';
+            span.textContent = tag;
+            specializationsContainer.appendChild(span);
+        });
+        
+        document.getElementById('modal-trainer').classList.remove('hidden');
+    }
+
+    function closeTrainerProfile() {
+        document.getElementById('modal-trainer').classList.add('hidden');
+    }
+
+    function contactTrainer() {
+        const trainerName = document.getElementById('trainer-name').innerText;
+        const trainerPhone = document.getElementById('trainer-phone').textContent.replace('📞', '').trim();
+        const trainerEmail = document.getElementById('trainer-email').textContent.replace('✉️', '').trim();
+        
+        alert(`Contacting ${trainerName}!\n\nPhone: ${trainerPhone}\nEmail: ${trainerEmail}\n\nWe will connect you shortly!`);
+        closeTrainerProfile();
+    }
+
+    // ============ COACHES SEARCH FUNCTIONALITY ============
+    function searchCoaches() {
+        const searchTerm = document.getElementById('coach-search').value.toLowerCase();
+        const coachCards = document.querySelectorAll('.coach-card');
+        
+        coachCards.forEach(card => {
+            const name = card.querySelector('h3').textContent.toLowerCase();
+            const specialty = card.querySelector('p').textContent.toLowerCase();
+            const description = card.querySelector('p.text-gray-300').textContent.toLowerCase();
+            
+            if (name.includes(searchTerm) || specialty.includes(searchTerm) || description.includes(searchTerm)) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+
+    function getSpecializationTags(specialty) {
+        const tagMap = {
+            'Personal Trainer': ['Weight Loss', 'Strength Training', 'Bodybuilding', 'Circuit Training'],
+            'Yoga & Meditation Coach': ['Vinyasa Yoga', 'Meditation', 'Stress Management', 'Flexibility'],
+            'Nutritionist': ['Weight Management', 'Sports Nutrition', 'Meal Planning', 'Diet Counseling'],
+            'CrossFit Coach': ['Functional Fitness', 'HIIT', 'Olympic Lifting', 'Competition Prep'],
+            'Pilates Instructor': ['Core Strength', 'Posture Correction', 'Rehabilitation', 'Pre/Post-Natal'],
+            'Martial Arts Trainer': ['Self-Defense', 'Fitness Kickboxing', 'Karate', 'Muay Thai'],
+            'Swimming Coach': ['Competitive Swimming', 'Aqua Therapy', 'Beginners', 'Stroke Correction'],
+            'Sports Physiotherapist': ['Injury Rehabilitation', 'Sports Massage', 'Injury Prevention', 'Recovery'],
+            'Zumba Instructor': ['Dance Fitness', 'Latin Rhythms', 'Weight Loss', 'Group Fitness'],
+            'Senior Fitness Coach': ['Mobility Training', 'Balance Exercises', 'Strength for Seniors', 'Rehabilitation']
+        };
+        
+        return tagMap[specialty] || ['Fitness Training', 'Health Coaching', 'Personalized Programs'];
+    }
+
+    // ============ STAR RATING LOGIC ============
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize star ratings
+        document.querySelectorAll('.star-rating').forEach(rating => {
+            const stars = rating.querySelectorAll('i');
+            const trainer = rating.getAttribute('data-trainer');
+            
+            stars.forEach(star => {
+                star.addEventListener('click', function() {
+                    const ratingValue = parseInt(this.getAttribute('data-rating'));
+                    const ratingDisplay = document.getElementById(`rating-${trainer}`);
+                    
+                    // Update stars
+                    stars.forEach((s, index) => {
+                        if (index < ratingValue) {
+                            s.classList.remove('far');
+                            s.classList.add('fas');
+                        } else {
+                            s.classList.remove('fas');
+                            s.classList.add('far');
+                        }
+                    });
+                    
+                    // Update rating display
+                    ratingDisplay.textContent = ratingValue.toFixed(1);
+                    
+                    // Save rating to localStorage
+                    localStorage.setItem(`rating-${trainer}`, ratingValue);
+                });
+                
+                // Load saved ratings
+                const savedRating = localStorage.getItem(`rating-${trainer}`);
+                if (savedRating) {
+                    const ratingValue = parseInt(savedRating);
+                    const ratingDisplay = document.getElementById(`rating-${trainer}`);
+                    
+                    if (parseInt(star.getAttribute('data-rating')) <= ratingValue) {
+                        star.classList.remove('far');
+                        star.classList.add('fas');
+                    }
+                    ratingDisplay.textContent = ratingValue.toFixed(1);
+                }
+            });
+        });
+        
+        // Initialize chart
+        initChart();
+        
+        // Initialize nutrition display
+        updateNutritionDisplay();
+        
+        // Initialize January workout data
+        initializeJanuaryWorkoutData();
+        
+        // Initialize workout section if active
+        if (document.getElementById('section-activity').classList.contains('hidden') === false) {
+            initializeWorkoutSection();
+        }
+    });
+
+    // ============ COMMUNITY CHALLENGE FUNCTION ============
+    function joinCommunityChallenge() {
+        if (!hasJoinedChallenge) {
+            const challengeBtn = document.getElementById('join-challenge-btn');
+            
+            // Update button text and add animation
+            challengeBtn.innerHTML = '<i class="fas fa-check mr-2"></i>Joined Challenge!';
+            challengeBtn.classList.add('challenge-joined');
+            
+            // Update community stats
+            const activeNow = document.querySelector('.apple-card.p-6 .space-y-4 .flex.justify-between.items-center:nth-child(3) .font-bold');
+            const currentActive = parseInt(activeNow.textContent.replace(/,/g, ''));
+            activeNow.textContent = (currentActive + 1).toLocaleString();
+            
+            // Show success message
+            showToast("🎉 Welcome to the 30-Day Fitness Challenge! You've joined the community!", 'success');
+            
+            // Update state
+            hasJoinedChallenge = true;
+            
+            // Remove animation class after animation completes
+            setTimeout(() => {
+                challengeBtn.classList.remove('challenge-joined');
+            }, 500);
+            
+            // Show challenge details
+            setTimeout(() => {
+                alert("30-Day Fitness Challenge Details:\n\n🎯 Goal: Complete 30 workouts in 30 days\n🏆 Reward: Exclusive WellNest Badge & Certificate\n📊 Tracking: Daily progress will be monitored\n👥 Community: Connect with 1,235 other participants\n\nCheck the community feed daily for tips and motivation!");
+            }, 1000);
+        } else {
+            showToast("You're already part of the community challenge! 🏆", 'info');
+        }
+    }
+
+    // ============ BLOG/COMMUNITY FUNCTIONS ============
+    function togglePostModal() {
+        document.getElementById('modal-post').classList.toggle('hidden');
+    }
+
+    function createPost() {
+        const title = document.getElementById('post-title').value.trim();
+        const category = document.getElementById('post-category').value;
+        const content = document.getElementById('post-content').value.trim();
+        
+        if (!title || !content) {
+            showToast("Please add a title and content!", 'error');
+            return;
+        }
+        
+        // Get category emoji and name
+        const categoryMap = {
+            'fitness': { emoji: '🏋️', name: 'Fitness Journey' },
+            'nutrition': { emoji: '🥗', name: 'Nutrition Tips' },
+            'wellness': { emoji: '🧘‍♀️', name: 'Wellness' },
+            'running': { emoji: '🏃', name: 'Running' },
+            'yoga': { emoji: '🧘', name: 'Yoga' },
+            'success': { emoji: '🎉', name: 'Success Story' }
+        };
+        
+        const categoryInfo = categoryMap[category] || { emoji: '📝', name: 'General' };
+        
+        // Create new post
+        const postElement = document.createElement('div');
+        postElement.className = 'apple-card p-8';
+        postElement.innerHTML = `
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center space-x-4">
+                    <img src="https://ui-avatars.com/api/?name=G&background=ff6b35&color=fff&bold=true" class="w-12 h-12 rounded-full border-2 border-[#ff6b35] p-0.5">
+                    <div>
+                        <h4 class="font-bold">Gireesh</h4>
+                        <p class="text-xs text-gray-400">Just now • ${categoryInfo.emoji} ${categoryInfo.name}</p>
+                    </div>
+                </div>
+                <button class="text-gray-500 hover:text-[#ff6b35]">
+                    <i class="fas fa-ellipsis-h"></i>
+                </button>
+            </div>
+            
+            <h3 class="text-2xl font-bold mb-4">${title}</h3>
+            <p class="text-gray-300 leading-relaxed mb-6">${content}</p>
+            
+            <!-- Post Stats -->
+            <div class="flex items-center space-x-6 text-gray-400 text-sm mb-6">
+                <div class="flex items-center space-x-2">
+                    <button onclick="likePost(this)" class="like-btn flex items-center space-x-1 hover:text-red-500">
+                        <i class="far fa-heart"></i>
+                        <span>0</span>
+                    </button>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <button onclick="toggleComments(this)" class="flex items-center space-x-1 hover:text-[#ff6b35]">
+                        <i class="far fa-comment"></i>
+                        <span>0</span>
+                    </button>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-share"></i>
+                    <span>0</span>
+                </div>
+            </div>
+            
+            <!-- Comments Section -->
+            <div class="comments-section hidden mt-6 border-t border-white/10 pt-6">
+                <div class="flex items-center space-x-4 mb-4">
+                    <img src="https://ui-avatars.com/api/?name=You&background=ff6b35&color=fff&bold=true" class="w-10 h-10 rounded-full">
+                    <div class="flex-1">
+                        <input type="text" class="comment-input w-full p-3 apple-card outline-none" placeholder="Write a comment..." onkeypress="if(event.key === 'Enter') addComment(this)">
+                    </div>
+                </div>
+                <div class="comments-container space-y-4"></div>
+            </div>
+        `;
+        
+        // Add to top of blog feed
+        const blogFeed = document.getElementById('blog-feed');
+        blogFeed.insertBefore(postElement, blogFeed.firstChild);
+        
+        // Clear form and close modal
+        document.getElementById('post-title').value = '';
+        document.getElementById('post-content').value = '';
+        togglePostModal();
+        
+        showToast("Post published successfully!", 'success');
+    }
+
+    function likePost(button) {
+        const heartIcon = button.querySelector('i');
+        const likeCount = button.querySelector('span');
+        let count = parseInt(likeCount.textContent);
+        
+        if (heartIcon.classList.contains('far')) {
+            heartIcon.classList.remove('far');
+            heartIcon.classList.add('fas', 'text-red-500');
+            count++;
+        } else {
+            heartIcon.classList.remove('fas', 'text-red-500');
+            heartIcon.classList.add('far');
+            count--;
+        }
+        
+        likeCount.textContent = count;
+    }
+
+    function toggleComments(button) {
+        const post = button.closest('.apple-card');
+        const commentsSection = post.querySelector('.comments-section');
+        const commentCount = button.querySelector('span');
+        
+        commentsSection.classList.toggle('hidden');
+        
+        // Focus on comment input when opening
+        if (!commentsSection.classList.contains('hidden')) {
+            const commentInput = commentsSection.querySelector('.comment-input');
+            if (commentInput) commentInput.focus();
+        }
+    }
+
+    function addComment(input) {
+        const comment = input.value.trim();
+        
+        if (comment) {
+            const commentsContainer = input.closest('.comments-section').querySelector('.comments-container');
+            const commentCount = input.closest('.apple-card').querySelector('.fa-comment').nextElementSibling;
+            
+            // Create new comment
+            const commentElement = document.createElement('div');
+            commentElement.className = 'comment-box p-4 apple-card';
+            commentElement.innerHTML = `
+                <div class="flex items-center space-x-2 mb-2">
+                    <img src="https://i.pravatar.cc/100?u=Gireesh" class="w-8 h-8 rounded-full">
+                    <span class="font-bold text-sm">You</span>
+                    <span class="text-xs text-gray-500">Just now</span>
+                </div>
+                <p class="text-gray-300">${comment}</p>
+            `;
+            
+            commentsContainer.appendChild(commentElement);
+            
+            // Update comment count
+            let count = parseInt(commentCount.textContent);
+            commentCount.textContent = count + 1;
+            
+            // Clear input
+            input.value = '';
+        }
+    }
+</script>
+</body>
+</html>
